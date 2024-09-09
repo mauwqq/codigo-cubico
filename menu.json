@@ -1,0 +1,39 @@
+{
+    "menu_principal": {
+        "1": "Tablero",
+        "2": "Reservas",
+        "3": "Consumos del frigobar",
+        "4": "Facturación",
+        "5": "Tablas del sistema",
+        "0": "Salir del sistema"
+    },
+    "menu_tablero": {
+        "1": "Visualizar reservas",
+        "0": "Menú principal"
+    },
+    "menu_reservas": {
+        "1": "Registrar reserva",
+        "2": "Datos de las reservas",
+        "3": "Anular reserva",
+        "0": "Menú principal"
+    },
+    "menu_consumo_frigobar": {
+        "1": "Registrar consumo",
+        "2": "Anular consumo",
+        "0": "Menú principal"
+    },
+    "menu_facturacion": {
+        "1": "Emitir facturas",
+        "2": "Emitir notas de crédito",
+        "3": "Consultar comprobantes",
+        "0": "Menú principal"
+    },
+    "menu_tablas_del_sistema": {
+        "1": "Clientes",
+        "2": "Habitaciones",
+        "3": "Productos frigobar",
+        "4": "Medios de pago",
+        "5": "Comprobantes",
+        "0": "Menú principal"
+    }
+}
