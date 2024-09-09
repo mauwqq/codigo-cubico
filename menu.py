@@ -3,7 +3,7 @@
 from os import system, name
 
 
-def clear():
+def clear() -> None:
     if name == "nt":
         _ = system("cls")
     else:
@@ -23,7 +23,7 @@ def pedir_numero(cant_op: int) -> int:
     return n
 
 
-def menu_principal():
+def menu_principal() -> None:
     clear()
     print(
         "##### Menú principal #####\n",
@@ -51,7 +51,7 @@ def menu_principal():
     return None
 
 
-def menu_tablero():
+def menu_tablero() -> None:
     clear()
     print(
         "##### Tablero #####\n",
@@ -67,7 +67,7 @@ def menu_tablero():
     return None
 
 
-def menu_reservas():
+def menu_reservas() -> None:
     clear()
     print(
         # Ver lo del check in y check out como un print para recordar al operario del sistema.
@@ -90,7 +90,7 @@ def menu_reservas():
     return None
 
 
-def menu_consumo_frigobar():
+def menu_consumo_frigobar() -> None:
     clear()
     print(
         "##### Consumos frigobar #####\n",
@@ -109,7 +109,7 @@ def menu_consumo_frigobar():
     return None
 
 
-def menu_facturacion():
+def menu_facturacion() -> None:
     clear()
     print(
         "##### Facturación #####\n",
@@ -131,7 +131,7 @@ def menu_facturacion():
     return None
 
 
-def menu_tablas_del_sistema():
+def menu_tablas_del_sistema() -> None:
     clear()
     print(
         "##### Tablas #####\n",
