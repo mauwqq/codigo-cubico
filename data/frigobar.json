@@ -1,0 +1,27 @@
+[
+    {
+        "ID": "00",
+        "NOMBRE": "Agua 500ml",
+        "PRECIO_U": 2500
+    },
+    {
+        "ID": "01",
+        "NOMBRE": "CocaCola 500ml",
+        "PRECIO_U": 4000
+    },
+    {
+        "ID": "02",
+        "NOMBRE": "Sprite 500ml",
+        "PRECIO_U": 4000
+    },
+    {
+        "ID": "11",
+        "NOMBRE": "Papas Fritas",
+        "PRECIO_U": 2500
+    },
+    {
+        "ID": "12",
+        "NOMBRE": "Alfajor",
+        "PRECIO_U": 1000
+    }
+]

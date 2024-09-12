@@ -1,10 +1,10 @@
 """Modulo para imprimir el menu del gestor."""
 
 import json
-from os import system, name
+import os
 
 
-def cargar_configuracion(ruta_archivo: str) -> dict[str]:
+def cargar_configuracion(ruta_archivo: str) -> dict[dict]:
     """Es mejor especificar el encoding porque usando el del sistema
     puede causar problemas de compatibilidad. UTF-8 es un standard.
     """
@@ -13,14 +13,10 @@ def cargar_configuracion(ruta_archivo: str) -> dict[str]:
 
 
 def clear() -> None:
-    if name == "nt":
-        _ = system("cls")
-    else:
-        _ = system("clear")
-    return None
+    os.system("cls" if os.name == "nt" else "clear")
 
 
-def pedir_numero(opciones: dict[str]) -> int:
+def pedir_numero(opciones: dict[dict]) -> int:
     while True:
         try:
             n = int(input("Seleccione una opción: "))
@@ -31,7 +27,7 @@ def pedir_numero(opciones: dict[str]) -> int:
             print("Debe ingresar un número.")
 
 
-def mostrar_menu(nombre_menu: str, config: dict[str]) -> int:
+def mostrar_menu(nombre_menu: str, config: dict[dict]) -> int:
     clear()
     opciones = config[nombre_menu]
     for clave, valor in opciones.items():
@@ -40,7 +36,7 @@ def mostrar_menu(nombre_menu: str, config: dict[str]) -> int:
     return op
 
 
-def menu_principal(config: dict[str]) -> None:
+def menu_principal(config: dict[dict]) -> None:
     op = mostrar_menu("menu_principal", config)
     match op:
         case 1:
@@ -61,7 +57,7 @@ def menu_principal(config: dict[str]) -> None:
     return None
 
 
-def menu_tablero(config: dict[str]) -> None:
+def menu_tablero(config: dict[dict]) -> None:
     op = mostrar_menu("menu_tablero", config)
     match op:
         case 1:
@@ -74,7 +70,7 @@ def menu_tablero(config: dict[str]) -> None:
     return None
 
 
-def menu_reservas(config: dict[str]) -> None:
+def menu_reservas(config: dict[dict]) -> None:
     op = mostrar_menu("menu_reservas", config)
     match op:
         case 1:
@@ -91,7 +87,7 @@ def menu_reservas(config: dict[str]) -> None:
     return None
 
 
-def menu_consumo_frigobar(config: dict[str]) -> None:
+def menu_consumo_frigobar(config: dict[dict]) -> None:
     op = mostrar_menu("menu_consumo_frigobar", config)
     match op:
         case 1:
@@ -106,7 +102,7 @@ def menu_consumo_frigobar(config: dict[str]) -> None:
     return None
 
 
-def menu_facturacion(config: dict[str]) -> None:
+def menu_facturacion(config: dict[dict]) -> None:
     op = mostrar_menu("menu_facturacion", config)
     match op:
         case 1:
@@ -123,7 +119,7 @@ def menu_facturacion(config: dict[str]) -> None:
     return None
 
 
-def menu_tablas_del_sistema(config: dict[str]) -> None:
+def menu_tablas_del_sistema(config: dict[dict]) -> None:
     op = mostrar_menu("menu_tablas_del_sistema", config)
     match op:
         case 1:
@@ -145,5 +141,5 @@ def menu_tablas_del_sistema(config: dict[str]) -> None:
 
 
 if __name__ == "__main__":
-   config = cargar_configuracion('menu.json')
-   menu_principal(config)
+    config = cargar_configuracion("menu.json")
+    menu_principal(config)
