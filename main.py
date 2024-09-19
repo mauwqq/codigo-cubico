@@ -1,9 +1,5 @@
-
-
-
-def main():
-    pass
+from modulos.menu import menu_principal, cargar_configuracion
 
 
 if __name__ == '__main__':
-    main()
+    menu_principal()
