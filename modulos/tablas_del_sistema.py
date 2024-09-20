@@ -30,7 +30,7 @@ def cargar_data(ruta_archivo: str) -> list[dict]:
                 data = []
                 for linea in lineas[1:]:
                     valores = linea.strip().split(',')
-                    elementos = {headers[i]: valores[i].strip('"') for i in range(len(headers))}
+                    elementos = {headers[i]: valores[i].strip('"') for i in range(headers)}
                     data.append(elementos)
                 return data
             except FileNotFoundError:
