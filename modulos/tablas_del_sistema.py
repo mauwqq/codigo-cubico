@@ -1,4 +1,5 @@
-import re, json
+import re
+import json
 from tabulate import tabulate
 from typing import List, Dict
 
