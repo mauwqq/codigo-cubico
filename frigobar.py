@@ -47,14 +47,3 @@ def cargar_elemento():
 
     
 """
-
-
-def main():
-    data = cargar_data("data/productos.csv")
-    imprimir_tabla("data/productos.csv")
-    id_elemento = pedir_id(data)
-    cant = pedir_numero("ingrese la cantidad que desea cargar: ")
-    n_hab = pedir_numero("ingrese el numero de habiatacion para cargar el consumo: ")
-
-
-main()
