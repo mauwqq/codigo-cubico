@@ -1,5 +1,5 @@
-from modulos.menu import menu_principal
+from modulos import menu
 
 
 if __name__ == "__main__":
-    menu_principal()
+    menu.menu_principal()
