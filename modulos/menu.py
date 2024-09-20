@@ -26,6 +26,10 @@ def cargar_configuracion(ruta_archivo: str) -> dict[dict]:
     Post: Devuelve un diccionario que contiene la configuración cargada del
           archivo.
 
+
+def cargar_configuracion(ruta_archivo: str) -> dict[str]:
+    """Es mejor especificar el encoding porque usando el del sistema
+    puede causar problemas de compatibilidad. UTF-8 es un standard.
     """
     with open(ruta_archivo, encoding="utf-8") as archivo:
         return json.load(archivo)
@@ -33,7 +37,6 @@ def cargar_configuracion(ruta_archivo: str) -> dict[dict]:
 
 def clear() -> None:
     """Limpia la consola (pantalla) del terminal."""
-
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -47,6 +50,14 @@ def pedir_numero(opciones: dict[dict]) -> int:
           seleccionada por el usuario.
 
     """
+    if name == "nt":
+        _ = system("cls")
+    else:
+        _ = system("clear")
+    return None
+
+
+def pedir_numero(opciones: dict[str]) -> int:
     while True:
         try:
             n = int(input("Seleccione una opción: "))
@@ -68,6 +79,7 @@ def mostrar_menu_y_pedir_numero(nombre_menu: str, config: dict[dict]) -> int:
           seleccionada en el menú.
 
     """
+def mostrar_menu(nombre_menu: str, config: dict[str]) -> int:
     clear()
     opciones = config[nombre_menu]
     for clave, valor in opciones.items():
@@ -95,6 +107,8 @@ def menu_principal() -> None:
     """
     config = cargar_configuracion("data/menu.json")
     op = mostrar_menu_y_pedir_numero("menu_principal", config)
+def menu_principal(config: dict[str]) -> None:
+    op = mostrar_menu("menu_principal", config)
     match op:
         case 1:
             menu_tablero(config)
@@ -130,6 +144,17 @@ def menu_tablero(config: dict[dict]) -> None:
             no_implementado()
         case 0:
             menu_principal()
+            menu_principal(config)
+    return None
+
+
+def menu_tablero(config: dict[str]) -> None:
+    op = mostrar_menu("menu_tablero", config)
+    match op:
+        case 1:
+            pass
+        case 0:
+            menu_principal(config)
         case _:
             print("Opción inválida. Regresando al menú de Tablero.")
             menu_tablero(config)
@@ -170,6 +195,17 @@ def menu_reservas(config: dict[dict]) -> None:
                 menu_principal()
         case 0:
             menu_principal()
+def menu_reservas(config: dict[str]) -> None:
+    op = mostrar_menu("menu_reservas", config)
+    match op:
+        case 1:
+            pass
+        case 2:
+            pass
+        case 3:
+            pass
+        case 0:
+            menu_principal(config)
         case _:
             print("Opción inválida. Regresando al menú de Reservas.")
             menu_reservas(config)
@@ -193,6 +229,15 @@ def menu_consumo_frigobar(config: dict[dict]) -> None:
             no_implementado()
         case 0:
             menu_principal()
+def menu_consumo_frigobar(config: dict[str]) -> None:
+    op = mostrar_menu("menu_consumo_frigobar", config)
+    match op:
+        case 1:
+            pass
+        case 2:
+            pass
+        case 0:
+            menu_principal(config)
         case _:
             print("Opción inválida. Regresando al menú de Consumo de Frigobar.")
             menu_consumo_frigobar(config)
@@ -219,6 +264,17 @@ def menu_facturacion(config: dict[dict]) -> None:
             no_implementado()
         case 0:
             menu_principal()
+def menu_facturacion(config: dict[str]) -> None:
+    op = mostrar_menu("menu_facturacion", config)
+    match op:
+        case 1:
+            pass
+        case 2:
+            pass
+        case 3:
+            pass
+        case 0:
+            menu_principal(config)
         case _:
             print("Opción inválida. Regresando al menú de Facturación.")
             menu_facturacion(config)
@@ -254,7 +310,27 @@ def menu_tablas_del_sistema(config: dict[dict]) -> None:
             no_implementado()
         case 0:
             menu_principal()
+def menu_tablas_del_sistema(config: dict[str]) -> None:
+    op = mostrar_menu("menu_tablas_del_sistema", config)
+    match op:
+        case 1:
+            pass
+        case 2:
+            pass
+        case 3:
+            pass
+        case 4:
+            pass
+        case 5:
+            pass
+        case 0:
+            menu_principal(config)
         case _:
             print("Opción inválida. Regresando al menú de Tablas del Sistema.")
             menu_tablas_del_sistema(config)
     return None
+
+
+if __name__ == "__main__":
+   config = cargar_configuracion('menu.json')
+   menu_principal(config)

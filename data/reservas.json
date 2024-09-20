@@ -170,3 +170,35 @@
         "estado": "reservada"
     }
 ]
+        "ID": "10",
+        "nombre": "1",
+        "apellido": "1",
+        "DNI": "1",
+        "calle": "1",
+        "numero": "1",
+        "piso": "1",
+        "dpto": "1",
+        "localidad": "1",
+        "provincia": "1",
+        "habitacion": "1",
+        "fecha reserva": "2024-09-12",
+        "inicio estadia": "1/1/1",
+        "fin estadia": "1/1/1"
+    },
+    {
+        "ID": "10",
+        "nombre": "2",
+        "apellido": "2",
+        "DNI": "2",
+        "calle": "2",
+        "numero": "2",
+        "piso": "2",
+        "dpto": "2",
+        "localidad": "2",
+        "provincia": "2",
+        "habitacion": "2",
+        "fecha reserva": "2024-09-12",
+        "inicio estadia": "2/2/2",
+        "fin estadia": "2/2/2"
+    }
+]
