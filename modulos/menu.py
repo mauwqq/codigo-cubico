@@ -14,27 +14,6 @@ import json
 import os
 import time
 
-
-def cargar_configuracion(ruta_archivo: str) -> dict[dict]:
-    """Carga la configuración desde un archivo JSON o CSV. Es mejor especificar
-    el encoding porque usando el del sistema puede causar problemas de
-    compatibilidad. UTF-8 es un standard.
-
-    Pre: Recibe una cadena "ruta_archivo" que representa la ruta de un archivo
-         JSON válido.
-
-    Post: Devuelve un diccionario que contiene la configuración cargada del
-          archivo.
-
-
-def cargar_configuracion(ruta_archivo: str) -> dict[str]:
-    """Es mejor especificar el encoding porque usando el del sistema
-    puede causar problemas de compatibilidad. UTF-8 es un standard.
-    """
-    with open(ruta_archivo, encoding="utf-8") as archivo:
-        return json.load(archivo)
-
-
 def clear() -> None:
     """Limpia la consola (pantalla) del terminal."""
     os.system("cls" if os.name == "nt" else "clear")
