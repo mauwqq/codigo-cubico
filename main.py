@@ -1,4 +1,4 @@
-from modulos.menu import menu_principal, cargar_configuracion
+from modulos.menu import menu_principal
 
 
 if __name__ == '__main__':
