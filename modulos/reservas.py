@@ -1,22 +1,23 @@
 from datetime import datetime
 import os
+from typing import List, Dict
 
 
 def clear() -> None:
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def registrar_reserva(lista_reservas: list[dict]) -> None:
-    """Contrato: registra una reserva a partir de los datos ingresados por el usuario. Valida si existe la misma reserva
-        si coincide DNI con fecha de inicio y fecha de fin. También valida que la habitación no esté ocupada en la fecha de inicio indicada.
-    Pre: el nombre, apellido, domicilio calle, localidad y provincia deben ser strings y ser ingresados en completas mayúsculas.
-        DNI debe ser un número entero positivo de 7 u 8 caracteres.
-        El N° de domicilio es el número de casa, debe ser un entero distinto de cero, así como el piso. El departamento puede ser un string o un entero.
-        El número de habitación debe ser un entero entre 1 y 29, que son la cantidad de habitaciones.
-        Las fechas de comienzo y de final de la estadía deben tener el formato DD para el día, MM para el mes y AA para el año.
-        El importe de la reserva debe ser un entero superior a cero. El medio de pago debe ser un string.
-        La lista de reservas proviene de y se guarda en un JSON.
-    Pos: almacena los datos en un JSON y genera automáticamente un número de reserva.
+def registrar_reserva(lista_reservas: List[Dict]) -> None:
+    """Registra una reserva a partir de los datos ingresados por el usuario.
+    Valida si existe la misma reserva si coincide DNI con fecha de inicio y
+    fecha de fin. También valida que la habitación no esté ocupada en la fecha
+    de inicio indicada.
+    
+    Pre: La lista de reservas proviene de y se guarda en un JSON.
+    
+    Pos: almacena los datos en un JSON y genera automáticamente un número de
+         reserva.
+    
     """
     nombre = input("Ingrese el nombre del huesped: ")
     apellido = input("Apellido: ")
@@ -37,15 +38,13 @@ def registrar_reserva(lista_reservas: list[dict]) -> None:
     dia_fin = int(input("Ingrese el día de finalización de la estadía: "))
     mes_fin = int(input("Indique el mes: "))
     anio_fin = int(input("Indique el año: "))
-
     encontrado = False
     for reserva in lista_reservas:
         apellido_registrado = reserva.get("apellido")
-        dia_ini_registrado = reserva.get("inicio estadia").split("-")[0]
-        mes_ini_registrado = reserva.get("inicio estadia").split("-")[1]
-        anio_ini_registrado = reserva.get("inicio estadia").split("-")[2]
+        dia_ini_registrado = reserva.get("inicio estadia").split("/")[0]
+        mes_ini_registrado = reserva.get("inicio estadia").split("/")[1]
+        anio_ini_registrado = reserva.get("inicio estadia").split("/")[2]
         num_habitacion_registrado = reserva.get("habitacion")
-
         if (
             apellido_registrado == apellido
             and dia_ini_registrado == str(dia_ini)
@@ -56,7 +55,6 @@ def registrar_reserva(lista_reservas: list[dict]) -> None:
             print("La reserva ya fue registrada")
             encontrado = True
             break
-
     if not encontrado:
         print(f"Datos personales: {nombre} {apellido} - DNI N°: {dni}")
         print(
@@ -107,10 +105,14 @@ def registrar_reserva(lista_reservas: list[dict]) -> None:
         lista_reservas.append(data)
 
 
-def consultar_reserva(listado_reservas: list[dict]) -> int:
-    """Contrato: recibe una lista de servas de un JSON y permite consultar si una reserva existe y sus datos, por el apellido y nombre del huesped.
+def consultar_reserva(listado_reservas: List[Dict]) -> int:
+    """Recibe una lista de servas de un JSON y permite consultar si una reserva
+    existe y sus datos, por el apellido y nombre del huesped.
     Pre: por teclado debe ingresarse el apellido y el nombre con mayúsculas.
-    Pos: devuelve el ID de la reserva consultada para ser usado en otras funciones.
+    
+    Post: devuelve el ID de la reserva consultada para ser usado en otras
+          funciones.
+    
     """
     apellido_consulta = input("Ingrese el apellido del huesped: ")
     nombre_consulta = input("Ingrese el nombre del huesped: ")
@@ -147,10 +149,14 @@ def consultar_reserva(listado_reservas: list[dict]) -> int:
     return 0
 
 
-def anular_reserva(listado_reservas: list[dict]) -> None:
-    """Contrato: anula una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
-    Pre: recibe una reserva desde la función "consultar_reserva".
-    Pos: modifica el estado de la reserva a "anulada".
+def anular_reserva(listado_reservas: List[Dict]) -> None:
+    """Anula una reserva llamando a la función "consultar_reserva". Primero la
+    muestra para confirmar.
+    
+    Pre: Recibe una reserva desde la función "consultar_reserva".
+    
+    Post: Modifica el estado de la reserva a "anulada".
+    
     """
     id_anular = consultar_reserva(listado_reservas)
     for reserva in listado_reservas:
@@ -168,10 +174,14 @@ def anular_reserva(listado_reservas: list[dict]) -> None:
                 )
 
 
-def registrar_check_in(listado_reservas: list[dict]) -> None:
-    """Contrato: registra el check-in del huesped sobre una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
-    Pre: recibe una reserva desde la función "consultar_reserva".
-    Pos: modifica el estado de la reserva a "ocupada".
+def registrar_check_in(listado_reservas: List[Dict]) -> None:
+    """Registra el check-in del huesped sobre una reserva llamando a la función
+    "consultar_reserva". Primero la muestra para confirmar.
+    
+    Pre: Recibe una reserva desde la función "consultar_reserva".
+    
+    Post: Modifica el estado de la reserva a "ocupada".
+    
     """
     id_modificar = consultar_reserva(listado_reservas)
     for reserva in listado_reservas:
@@ -189,13 +199,16 @@ def registrar_check_in(listado_reservas: list[dict]) -> None:
                 )
 
 
-def registrar_check_out(listado_reservas: list[dict]) -> None:
-    """Contrato: registra el check-out del huesped sobre una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
-    Pre: recibe una reserva desde la función "consultar_reserva".
-    Pos: modifica el estado de la reserva a "ocupada".
+def registrar_check_out(listado_reservas: List[Dict]) -> None:
+    """Registra el check-out del huesped sobre una reserva llamando a la función
+    "consultar_reserva". Primero la muestra para confirmar.
+    
+    Pre: Recibe una reserva desde la función "consultar_reserva".
+    
+    Post: Modifica el estado de la reserva a "ocupada".
+    
     """
     id_modificar = consultar_reserva(listado_reservas) 
-    
     reserva_encontrada = False
     # entra en la reserva 1 aunque la reserva no haya sido encontrada 
     """
