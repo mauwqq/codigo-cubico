@@ -1,11 +1,11 @@
-from modulos.reservas import consultar_reserva
-from modulos.tablas_del_sistema import cargar_data
-
+from modulos import reservas
+from modulos import tablas_del_sistema
+from typing import List, Dict
 
 def emitir_facturas(
-    listado_reservas: list[dict], listado_consumos_frigobar: list[dict]
+    listado_reservas: List[Dict], listado_consumos_frigobar: List[Dict]
 ) -> None:
-    ID = consultar_reserva(cargar_data("data/reservas.json"))
+    ID = reservas.consultar_reserva(tablas_del_sistema.cargar_data("data/reservas.json"))
     for reserva in listado_reservas:
         if reserva["ID"] == ID:
             if reserva["estado"] == "check-out":
