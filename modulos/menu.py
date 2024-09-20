@@ -220,7 +220,9 @@ def menu_tablas_del_sistema(config: dict[dict]) -> None:
             if input("Presione 'Enter' para volver.") == "":
                 menu_principal()
         case 2:
-            no_implementado()
+            imprimir_tabla("data/habitaciones.csv")
+            if input("Presione 'Enter' para volver.") == "":
+                menu_principal()
         case 3:
             imprimir_tabla("data/productos.csv")
             if input("Presione 'Enter' para volver.") == "":
