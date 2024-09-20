@@ -10,7 +10,7 @@ def clear() -> None:
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def registrar_reserva(lista_reservas: list) -> None:
+def registrar_reserva(lista_reservas: list[dict]) -> None:
     """Contrato: registra una reserva a partir de los datos ingresados por el usuario. Valida si existe la misma reserva
         si coincide DNI con fecha de inicio y fecha de fin. También valida que la habitación no esté ocupada en la fecha de inicio indicada.
     Pre: el nombre, apellido, domicilio calle, localidad y provincia deben ser strings y ser ingresados en completas mayúsculas.
@@ -43,12 +43,12 @@ def registrar_reserva(lista_reservas: list) -> None:
     anio_fin = int(input("Indique el año: "))
     
     for reserva in lista_reservas:
-        apellido_registrado = lista_reservas.get('apellido')
-        dia_ini_registrado = lista_reservas.get('dia_ini')
-        mes_ini_registrado = lista_reservas.get('mes_ini')
-        anio_ini_registrado = lista_reservas.get('anio_ini')
-        num_habitacion_registrado = lista_reservas.get('num_habitacion')
-        if apellido_registrado == apellido and dia_ini_registrado == dia_ini and mes_ini_registrado == mes_ini and anio_ini_registrado == anio_ini and num_habitacion_registrado == num_habitacion:
+        apellido_registrado = reserva.get('apellido')
+        dia_ini_registrado = reserva.get('dia_ini')
+        mes_ini_registrado = reserva.get('mes_ini')
+        anio_ini_registrado = reserva.get('anio_ini')
+        num_habitacion_registrado = reserva.get('num_habitacion')
+        if apellido_registrado == apellido and dia_ini_registrado == str(dia_ini) and mes_ini_registrado == str(mes_ini) and anio_ini_registrado == str(anio_ini) and num_habitacion_registrado == str(num_habitacion):
             print("La reserva ya fue registrada")
         else:
             print(f"Datos personales: {nombre} {apellido} - DNI N°: {dni}")
@@ -92,7 +92,7 @@ def registrar_reserva(lista_reservas: list) -> None:
                 lista_reservas.append(data)
                 # AGREGAR LA PARTE PARA GRABAR EL DICCIONARIO EN EL ARCHIVO JSON
 
-def consultar_reserva(listado_reservas: list) -> int:
+def consultar_reserva(listado_reservas: list[dict]) -> int:
     '''Contrato: recibe una lista de servas de un JSON y permite consultar si una reserva existe y sus datos, por el apellido y nombre del huesped.
     Pre: por teclado debe ingresarse el apellido y el nombre con mayúsculas.
     Pos: devuelve el ID de la reserva consultada para ser usado en otras funciones.
@@ -128,46 +128,44 @@ def consultar_reserva(listado_reservas: list) -> int:
             print("No hay reservas registradas para ese huesped")
     return id
 
-def anular_reserva(listado_reservas: list) -> None:
+def anular_reserva(listado_reservas: list[dict]) -> None:
     '''Contrato: anula una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
     Pre: recibe una reserva desde la función "consultar_reserva".
     Pos: modifica el estado de la reserva a "anulada".
     '''
     id_anular = consultar_reserva(listado_reservas)
     for reserva in listado_reservas:
-        match id_anular:
-            case id_reserva if id_reserva in reserva:
-                confirmacion = int(input("Ingrese 1 si los datos para confirmar la anulación y 0 para salir: "))
-                if confirmacion == 0:
-                    clear()
-                else:
-                    print("EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A ANULADA")
+        if id_anular in reserva["ID"]:
+            confirmacion = int(input("Ingrese 1 si los datos para confirmar la anulación y 0 para salir: "))
+            if confirmacion == 0:
+                clear()
+            else:
+                print("EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A ANULADA")
 
-def registrar_check_in(listado_reservas: list) -> None:
+def registrar_check_in(listado_reservas: list[dict]) -> None:
     '''Contrato: registra el check-in del huesped sobre una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
     Pre: recibe una reserva desde la función "consultar_reserva".
     Pos: modifica el estado de la reserva a "ocupada".
     '''
     id_modificar = consultar_reserva(listado_reservas)
     for reserva in listado_reservas:
-        match id_modificar:
-            case id_reserva if id_reserva in reserva:
-                confirmacion = int(input("Ingrese 1 si los datos para confirmar el check-in y 0 para salir: "))
-                if confirmacion == 0:
-                    clear()
-                else:
-                    print("EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A OCUPADA")
+        if id_modificar in reserva["ID"]:
+            confirmacion = int(input("Ingrese 1 si los datos para confirmar el check-in y 0 para salir: "))
+            if confirmacion == 0:
+                clear()
+            else:
+                print("EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A OCUPADA")
 
 
-def registrar_check_out(listado_reservas: list) -> None:
+def registrar_check_out(listado_reservas: list[dict]) -> None:
     '''Contrato: registra el check-out del huesped sobre una reserva llamando a la función "consultar_reserva". Primero la muestra para confirmar.
     Pre: recibe una reserva desde la función "consultar_reserva".
     Pos: modifica el estado de la reserva a "ocupada".
     '''
     id_modificar = consultar_reserva(listado_reservas)
     for reserva in listado_reservas:
-        match id_modificar:
-            case id_reserva if id_reserva in reserva:
+        for reserva in listado_reservas:
+            if id_modificar in reserva["ID"]:
                 confirmacion = int(input("Ingrese 1 si los datos para confirmar el check-out y 0 para salir: "))
                 if confirmacion == 0:
                     clear()
