@@ -139,11 +139,15 @@ def menu_reservas(config: dict[dict]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_reservas", config)
     match op:
         case 1:
-            no_implementado()
+            registrar_reserva()    
         case 2:
-            no_implementado()
+            consultar_reserva()
         case 3:
-            no_implementado()
+            anular_reserva()    
+        case 4:
+            registrar_check_in() 
+        case 5:
+            registrar_check_out()    
         case 0:
             menu_principal()
         case _:
