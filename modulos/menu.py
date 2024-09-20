@@ -1,6 +1,15 @@
 """Modulo para imprimir el menu del gestor."""
 
-from modulos.tablas_del_sistema import imprimir_tabla
+from modulos.tablas_del_sistema import imprimir_tabla, cargar_data
+from modulos.reservas import (
+    registrar_reserva,
+    consultar_reserva,
+    anular_reserva,
+    registrar_check_in,
+    registrar_check_out,
+)
+
+# from modulos.facturacion import emitir_facturas
 import json
 import os
 import time
@@ -15,8 +24,8 @@ def cargar_configuracion(ruta_archivo: str) -> dict[dict]:
          JSON válido.
 
     Post: Devuelve un diccionario que contiene la configuración cargada del
-          archivo.    
-    
+          archivo.
+
     """
     with open(ruta_archivo, encoding="utf-8") as archivo:
         return json.load(archivo)
@@ -137,17 +146,28 @@ def menu_reservas(config: dict[dict]) -> None:
 
     """
     op = mostrar_menu_y_pedir_numero("menu_reservas", config)
+    config = cargar_data("data/reservas.json")
     match op:
         case 1:
-            registrar_reserva()    
+            registrar_reserva(config)
+            if input("Presione 'Enter' para volver al menu.") == '':
+                menu_principal()
         case 2:
-            consultar_reserva()
+            consultar_reserva(config)
+            if input("Presione 'Enter' para volver al menu.") == '':
+                menu_principal()
         case 3:
-            anular_reserva()    
+            anular_reserva(config)
+            if input("Presione 'Enter' para volver al menu.") == '':
+                menu_principal()
         case 4:
-            registrar_check_in() 
+            registrar_check_in(config)
+            if input("Presione 'Enter' para volver al menu.") == '':
+                menu_principal()
         case 5:
-            registrar_check_out()    
+            registrar_check_out(config)
+            if input("Presione 'Enter' para volver al menu.") == '':
+                menu_principal()
         case 0:
             menu_principal()
         case _:
@@ -191,6 +211,7 @@ def menu_facturacion(config: dict[dict]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_facturacion", config)
     match op:
         case 1:
+            # emitir_facturas(cargar_data("data/productos.csv"), cargar_data("data/consumos.csv"))
             no_implementado()
         case 2:
             no_implementado()
