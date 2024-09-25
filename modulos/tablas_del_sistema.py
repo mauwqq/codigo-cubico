@@ -1,7 +1,10 @@
-import re, json
+import re
+import json
 from tabulate import tabulate
+from typing import List, Dict
 
-def cargar_data(ruta_archivo: str) -> list[dict]:
+
+def cargar_data(ruta_archivo: str) -> List[Dict]:
     """Carga datos desde un archivo JSON o CSV.
 
     Pre: Recibe una cadena "ruta_archivo" que representa la ruta de un archivo
