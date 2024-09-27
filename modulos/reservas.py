@@ -1,230 +1,188 @@
-from datetime import datetime
-import os
-from typing import List, Dict
+from typing import Tuple, Callable, Dict, List
+import re
 
 
-def clear() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
+def pedir(validar: Callable[[str], str], msj: str) -> str:
+    """Solicita un valor al usuario y lo valida con la función dada.
 
+    Pre: validar es una función que recibe una cadena y devuelve una cadena.
+         msj es un mensaje que se muestra al usuario.
 
-def registrar_reserva(lista_reservas: List[Dict]) -> None:
-    """Registra una reserva a partir de los datos ingresados por el usuario.
-    Valida si existe la misma reserva si coincide DNI con fecha de inicio y
-    fecha de fin. También valida que la habitación no esté ocupada en la fecha
-    de inicio indicada.
-    
-    Pre: La lista de reservas proviene de y se guarda en un JSON.
-    
-    Pos: almacena los datos en un JSON y genera automáticamente un número de
-         reserva.
-    
+    Post: Retorna el valor validado ingresado por el usuario.
+
     """
-    nombre = input("Ingrese el nombre del huesped: ")
-    apellido = input("Apellido: ")
-    dni = int(input("Ingrese el número de DNI sin puntos: "))
-    domicilio_calle = input("Domicilio: ingrese la calle: ")
-    domicilio_numero = int(input("Altura de la calle: "))
-    domicilio_piso = int(input("Piso: "))
-    domicilio_dpto = input("Departamento: ")
-    localidad = input("Localidad: ")
-    provincia = input("Provincia: ")
-    num_habitacion = int(
-        input("Ingrese el número de habitación en la que se alojará: ")
+    while True:
+        try:
+            return validar(input(msj))
+        except ValueError as e:
+            print(e)
+
+
+def validar_con_regex(
+    patron: str,
+    valor: str,
+    mensajes: Dict[str, str],
+    verificar_longitud: bool = True,
+    permitir_vacio: bool = False,
+) -> str:
+    """Valida un valor contra una expresión regular y otras condiciones.
+
+    Pre: patron es una expresión regular, valor es la cadena a validar,
+         mensajes es un diccionario con mensajes de error, y los parámetros
+         booleanos indican si se verifica la longitud y si se permite un valor vacío.
+
+    Post: Retorna el valor validado o "" si permitir_vacio es True y el valor es vacío.
+
+    """
+    valor = valor.strip()
+    if permitir_vacio and valor == "":
+        return ""
+    if not valor:
+        raise ValueError(mensajes["vacío"])
+    if not re.match(patron, valor):
+        raise ValueError(mensajes["invalido"])
+    if verificar_longitud and len(valor) < 3:
+        raise ValueError("El campo debe tener al menos tres letras.")
+    return valor.title()
+
+
+def validar_dni(dni: str) -> int:
+    """Valida que el DNI ingresado tenga el formato correcto.
+
+    Pre: dni es una cadena que representa el DNI.
+
+    Post: Retorna el DNI como un entero si es válido.
+          ValueError si el DNI no es válido.
+
+    """
+    dni = dni.strip()
+    if not dni or len(dni) != 8 or not dni.isdigit():
+        raise ValueError("El DNI debe contener 8 caracteres numéricos.")
+    return int(dni)
+
+
+def validar_domicilio(campo: str, valor: str) -> str:
+    """Valida un campo de domicilio utilizando expresiones regulares.
+
+    Pre: campo es el nombre del campo a validar y valor es la cadena a validar.
+
+    Post: Retorna el valor validado.
+          ValueError si el valor no es válido.
+
+    """
+    validaciones = {
+        "Calle": (
+            r"^[a-zA-Z0-9 ]+$",
+            "La calle no puede estar vacía.",
+            "La calle no puede contener símbolos.",
+        ),
+        "Altura": (
+            r"^\d+$",
+            "La altura debe ser un número entero.",
+            "La altura no puede estar vacía.",
+        ),
+        "Piso": (r"^\d*$", "Ingrese un piso válido.", "El piso no puede estar vacío."),
+        "Departamento": (
+            r"^[a-zA-Z0-9 ]*$",
+            "El departamento no puede tener símbolos.",
+            "",
+        ),
+        "Localidad": (
+            r"^[a-zA-Z0-9 ]+$",
+            "Debe ingresar una localidad.",
+            "La localidad no puede estar vacía.",
+        ),
+        "Provincia": (
+            r"^[a-zA-Z ]+$",
+            "Debe ingresar una provincia.",
+            "La provincia no puede estar vacía.",
+        ),
+    }
+    patron, mensaje_vacio, mensaje_invalido = validaciones[campo]
+    verificar_longitud = campo != "Altura"
+    permitir_vacio = campo in ["Piso", "Departamento"]
+    return validar_con_regex(
+        patron,
+        valor,
+        {"vacío": mensaje_vacio, "invalido": mensaje_invalido},
+        verificar_longitud,
+        permitir_vacio,
     )
-    fecha_reserva = datetime.now().date()
-    dia_ini = int(input("Ingrese el día de inicio de la estadía: "))
-    mes_ini = int(input("Indique el mes: "))
-    anio_ini = int(input("Indique el año: "))
-    dia_fin = int(input("Ingrese el día de finalización de la estadía: "))
-    mes_fin = int(input("Indique el mes: "))
-    anio_fin = int(input("Indique el año: "))
-    encontrado = False
-    for reserva in lista_reservas:
-        apellido_registrado = reserva.get("apellido")
-        dia_ini_registrado = reserva.get("inicio estadia").split("/")[0]
-        mes_ini_registrado = reserva.get("inicio estadia").split("/")[1]
-        anio_ini_registrado = reserva.get("inicio estadia").split("/")[2]
-        num_habitacion_registrado = reserva.get("habitacion")
-        if (
-            apellido_registrado == apellido
-            and dia_ini_registrado == str(dia_ini)
-            and mes_ini_registrado == str(mes_ini)
-            and anio_ini_registrado == str(anio_ini)
-            and num_habitacion_registrado == str(num_habitacion)
-        ):
-            print("La reserva ya fue registrada")
-            encontrado = True
-            break
-    if not encontrado:
-        print(f"Datos personales: {nombre} {apellido} - DNI N°: {dni}")
-        print(
-            f"Domicilio: {domicilio_calle} N° {domicilio_numero} - Piso {domicilio_piso} - Departamento {domicilio_dpto} - {localidad} - {provincia}"
+
+
+def pedir_datos_domicilio() -> Tuple[str, int, int, str, str, str]:
+    """Solicita y valida los datos de domicilio al usuario.
+
+    Post: Retorna una tupla con los datos de domicilio:
+          (Calle, Altura, Piso, Departamento, Localidad, Provincia).
+
+    """
+    print("Domicilio")
+    datos_domicilio = [
+        pedir(
+            lambda x: validar_domicilio(campo, x), f"{campo} ('Enter' si no aplica): "
         )
-        print(f"Fecha de reserva: {fecha_reserva} - Habitación: {num_habitacion}")
-        print(
-            f"Inicio estadía: {dia_ini}/{mes_ini}/{anio_ini} - Fin estadía: {dia_fin}/{mes_fin}/{anio_fin}"
-        )
-
-        confirmacion = int(
-            input("Ingrese 1 si los datos son correctos y 0 si son incorrectos: ")
-        )
-
-        if confirmacion == 0:
-            clear()
-            return
-        for reserva in lista_reservas:
-            if (
-                reserva.get("habitacion") == str(num_habitacion)
-                and reserva.get("inicio estadia").split("/")[0] == str(dia_ini)
-                and reserva.get("inicio estadia").split("/")[1] == str(mes_ini)
-                and reserva.get("inicio estadia").split("/")[2] == str(anio_ini)
-            ):
-                print("La habitación no está disponible en la fecha indicada")
-                return
-
-        id_reserva = str(len(lista_reservas) + 1)
-
-        data = {
-            "ID": id_reserva,
-            "nombre": nombre,
-            "apellido": apellido,
-            "DNI": str(dni),
-            "calle": domicilio_calle,
-            "numero": str(domicilio_numero),
-            "piso": str(domicilio_piso),
-            "dpto": str(domicilio_dpto),
-            "localidad": localidad,
-            "provincia": provincia,
-            "habitacion": str(num_habitacion),
-            "fecha reserva": str(fecha_reserva),
-            "inicio estadia": f"{str(dia_ini)}/{str(mes_ini)}/{str(anio_ini)}",
-            "fin estadia": f"{str(dia_fin)}/{str(mes_fin)}/{str(anio_fin)}",
-            "estado": "reservada",
-        }
-
-        lista_reservas.append(data)
+        for campo in [
+            "Calle",
+            "Altura",
+            "Piso",
+            "Departamento",
+            "Localidad",
+            "Provincia",
+        ]
+    ]
+    return tuple(datos_domicilio)
 
 
-def consultar_reserva(listado_reservas: List[Dict]) -> int:
-    """Recibe una lista de servas de un JSON y permite consultar si una reserva
-    existe y sus datos, por el apellido y nombre del huesped.
-    Pre: por teclado debe ingresarse el apellido y el nombre con mayúsculas.
-    
-    Post: devuelve el ID de la reserva consultada para ser usado en otras
-          funciones.
-    
+def pedir_datos_cliente() -> Tuple[str, str, int, str, int, int, str, str, str]:
+    """Solicita y valida los datos del cliente.
+
+    Post: Retorna una tupla con los datos del cliente:
+          (Nombre, Apellido, DNI, Calle, Altura, Piso, Departamento, Localidad, Provincia).
+
     """
-    apellido_consulta = input("Ingrese el apellido del huesped: ")
-    nombre_consulta = input("Ingrese el nombre del huesped: ")
-    for reserva in listado_reservas:
-        apellido = reserva.get("apellido")
-        nombre = reserva.get("nombre")
-        ID = reserva.get("ID")
-        DNI = reserva.get("DNI")
-        calle = reserva.get("calle")
-        numero = reserva.get("numero")
-        piso = reserva.get("piso")
-        dpto = reserva.get("dpto")
-        localidad = reserva.get("localidad")
-        provincia = reserva.get("provincia")
-        habitacion = reserva.get("habitacion")
-        fecha_reserva = reserva.get("fecha reserva")
-        inicio_estadia = reserva.get("inicio estadia")
-        fin_estadia = reserva.get("fin estadia")
-        estado_reserva = reserva.get("estado")
-        """
-        if apellido == apellido_consulta and nombre == nombre_consulta:
-            print(f"ID: {ID} - Datos personales: {nombre} {apellido} - DNI N°: {DNI}")
-            print(
-                f"Domicilio: {calle} N° {numero} - Piso {piso} - Departamento {dpto} - {localidad} - {provincia}"
-            )
-            print(f"Fecha de reserva: {fecha_reserva} - Habitación: {habitacion}")
-            print(
-                f"Inicio estadía: {inicio_estadia} - Fin estadía: {fin_estadia} - Estado: {estado_reserva}"
-            )
-        else:
-            print("No hay reservas registradas para ese huesped")
-        """
-        return ID
-    return 0
+    errores = {
+        "nombre": {
+            "vacío": "El nombre no puede estar vacío.",
+            "invalido": "El nombre debe ser una sola palabra sin espacios ni símbolos.",
+        },
+        "apellido": {
+            "vacío": "El apellido no puede estar vacío.",
+            "invalido": "El apellido debe ser una sola palabra sin espacios ni símbolos.",
+        },
+    }
+    nombre = pedir(
+        lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["nombre"]),
+        "Nombre: ",
+    )
+    apellido = pedir(
+        lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["apellido"]),
+        "Apellido: ",
+    )
+    dni = pedir(validar_dni, "DNI: ")
+    """El '*' o 'unpacking' expande la tupla con los valores que retorna pedir_datos_domicilio()."""
+    return (nombre, apellido, dni, *pedir_datos_domicilio())
 
 
-def anular_reserva(listado_reservas: List[Dict]) -> None:
-    """Anula una reserva llamando a la función "consultar_reserva". Primero la
-    muestra para confirmar.
-    
-    Pre: Recibe una reserva desde la función "consultar_reserva".
-    
-    Post: Modifica el estado de la reserva a "anulada".
-    
-    """
-    id_anular = consultar_reserva(listado_reservas)
-    for reserva in listado_reservas:
-        if id_anular in reserva["ID"]:
-            confirmacion = int(
-                input(
-                    "Ingrese 1 si los datos para confirmar la anulación y 0 para salir: "
-                )
-            )
-            if confirmacion == 0:
-                clear()
-            else:
-                print(
-                    "EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A ANULADA"
-                )
+def registrar_reserva(reservas: List[Dict]):
+    pass
 
 
-def registrar_check_in(listado_reservas: List[Dict]) -> None:
-    """Registra el check-in del huesped sobre una reserva llamando a la función
-    "consultar_reserva". Primero la muestra para confirmar.
-    
-    Pre: Recibe una reserva desde la función "consultar_reserva".
-    
-    Post: Modifica el estado de la reserva a "ocupada".
-    
-    """
-    id_modificar = consultar_reserva(listado_reservas)
-    for reserva in listado_reservas:
-        if id_modificar in reserva["ID"]:
-            confirmacion = int(
-                input(
-                    "Ingrese 1 si los datos para confirmar el check-in y 0 para salir: "
-                )
-            )
-            if confirmacion == 0:
-                clear()
-            else:
-                print(
-                    "EN ESTA PARTE TIENE QUE HABER UNA BÚSQUEDA DENTRO DEL JSON PARA REEMPLAZAR EL VALOR DE LA KEY A OCUPADA"
-                )
+def consultar_reserva(reservas: List[Dict]):
+    pass
 
 
-def registrar_check_out(listado_reservas: List[Dict]) -> None:
-    """Registra el check-out del huesped sobre una reserva llamando a la función
-    "consultar_reserva". Primero la muestra para confirmar.
-    
-    Pre: Recibe una reserva desde la función "consultar_reserva".
-    
-    Post: Modifica el estado de la reserva a "ocupada".
-    
-    """
-    id_modificar = consultar_reserva(listado_reservas) 
-    reserva_encontrada = False
-    # entra en la reserva 1 aunque la reserva no haya sido encontrada 
-    """
-    for reserva in listado_reservas:
-        if reserva["ID"] == id_modificar:
-            reserva_encontrada = True
-            print(f"Datos de la reserva:\n{reserva}")
-            confirmacion = int(
-                input("Ingrese 1 si los datos son correctos para confirmar el check-out y 0 para salir: ")
-            )
-            if confirmacion == 0:
-                clear()
-                return 
-            reserva["estado"] = "desocupada"
-            print("Check-out registrado exitosamente.")
-            break
-    """
-    if not reserva_encontrada:
-        print("No se encontró la reserva con el ID proporcionado.")
+def anular_reserva(reservas: List[Dict]):
+    pass
+
+
+def registrar_check_in(reservas: List[Dict]):
+    pass
+
+
+def registrar_check_out(reservas: List[Dict]):
+    pass
+
+
+if __name__ == "__main__":
+    print(pedir_datos_cliente())
