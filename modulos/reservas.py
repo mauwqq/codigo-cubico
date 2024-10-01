@@ -78,8 +78,8 @@ def validar_domicilio(campo: str, valor: str) -> str:
         ),
         "Altura": (
             r"^\d+$",
-            "La altura debe ser un número entero.",
             "La altura no puede estar vacía.",
+            "La altura debe ser un número entero.",
         ),
         "Piso": (r"^\d*$", "Ingrese un piso válido.", "El piso no puede estar vacío."),
         "Departamento": (
@@ -89,13 +89,13 @@ def validar_domicilio(campo: str, valor: str) -> str:
         ),
         "Localidad": (
             r"^[a-zA-Z0-9 ]+$",
-            "Debe ingresar una localidad.",
             "La localidad no puede estar vacía.",
+            "Debe ingresar una localidad.",
         ),
         "Provincia": (
             r"^[a-zA-Z ]+$",
-            "Debe ingresar una provincia.",
             "La provincia no puede estar vacía.",
+            "Debe ingresar una provincia.",
         ),
     }
     patron, mensaje_vacio, mensaje_invalido = validaciones[campo]
@@ -110,32 +110,37 @@ def validar_domicilio(campo: str, valor: str) -> str:
     )
 
 
-def pedir_datos_domicilio() -> Tuple[str, int, int, str, str, str]:
+def pedir_datos_domicilio() -> Tuple[str, str, str, int, str, str]:
     """Solicita y valida los datos de domicilio al usuario.
+
+    Pre: No recibe nada.
 
     Post: Retorna una tupla con los datos de domicilio:
           (Calle, Altura, Piso, Departamento, Localidad, Provincia).
 
     """
     print("Domicilio")
+    campos = [
+        ("Provincia", True),
+        ("Localidad", True),
+        ("Calle", True),
+        ("Altura", True),
+        ("Piso", False),
+        ("Departamento", False)
+    ]
     datos_domicilio = [
         pedir(
-            lambda x: validar_domicilio(campo, x), f"{campo} ('Enter' si no aplica): "
+            lambda x: validar_domicilio(campo, x), f"{campo}: " if requerido else f"{campo} ('Enter' si no aplica): "
         )
-        for campo in [
-            "Calle",
-            "Altura",
-            "Piso",
-            "Departamento",
-            "Localidad",
-            "Provincia",
-        ]
+        for campo, requerido in campos
     ]
-    return tuple(datos_domicilio)
+    return datos_domicilio
 
 
-def pedir_datos_cliente() -> Tuple[str, str, int, str, int, int, str, str, str]:
+def pedir_datos_cliente() -> Tuple[str, str, int, str, str, str, int, str, str]:
     """Solicita y valida los datos del cliente.
+
+    Pre: No recibe nada.
 
     Post: Retorna una tupla con los datos del cliente:
           (Nombre, Apellido, DNI, Calle, Altura, Piso, Departamento, Localidad, Provincia).
@@ -165,7 +170,7 @@ def pedir_datos_cliente() -> Tuple[str, str, int, str, int, int, str, str, str]:
 
 
 def registrar_reserva(reservas: List[Dict]):
-    pass
+    pedir_datos_cliente()
 
 
 def consultar_reserva(reservas: List[Dict]):
