@@ -55,8 +55,8 @@ def validar_dni(dni: str) -> int:
           ValueError si el DNI no es válido.
 
     """
-    dni = dni.strip()
-    if not dni or len(dni) != 8 or not dni.isdigit():
+    dni = re.sub(r'\D', '', dni)
+    if len(dni) != 8:
         raise ValueError("El DNI debe contener 8 caracteres numéricos.")
     return int(dni)
 
@@ -160,7 +160,7 @@ def pedir_datos_cliente() -> Tuple[str, str, int, str, int, int, str, str, str]:
         "Apellido: ",
     )
     dni = pedir(validar_dni, "DNI: ")
-    """El '*' o 'unpacking' expande la tupla con los valores que retorna pedir_datos_domicilio()."""
+    # El '*' o 'unpacking' expande la tupla con los valores que retorna pedir_datos_domicilio().
     return (nombre, apellido, dni, *pedir_datos_domicilio())
 
 
