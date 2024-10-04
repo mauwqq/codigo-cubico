@@ -28,6 +28,7 @@ errores = {
     },
 }
 
+
 def solicitar_input(validacion: Callable[[str], str], msj: str) -> str:
     """Solicita un valor al usuario y lo valida con la función dada.
 
@@ -72,7 +73,7 @@ def validar_con_regex(
     return valor.title()
 
 
-def validar_dni(dni: str) -> int: # dni tambien puede ser len(7)
+def validar_dni(dni: str) -> int:  # dni tambien puede ser len(7)
     """Valida que el DNI ingresado tenga el formato correcto.
 
     Pre: dni es una cadena que representa el DNI.
@@ -319,7 +320,7 @@ def registrar_reserva(reservas: List[Dict]):
         except ValueError as e:
             print(e)
     reserva = {
-        "ID": len(reservas)+1,
+        "ID": len(reservas) + 1,
         "nombre": nombre,
         "apellido": apellido,
         "dni": dni,
@@ -327,8 +328,8 @@ def registrar_reserva(reservas: List[Dict]):
         "localidad": localidad,
         "calle": calle,
         "altura": altura,
-        "piso": piso if piso else '',
-        "departamento": dpto if dpto else '',
+        "piso": piso if piso else "",
+        "departamento": dpto if dpto else "",
         "n_habitacion": n_habitacion,
         "fecha_reserva": fecha_reserva,
         "fecha_inicio": "/".join(fecha_i),
@@ -348,15 +349,19 @@ def consultar_reserva(reservas: List[Dict]):
         lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["apellido"]),
         "Apellido: ",
     )
-    reserva_encontrada = list(reserva for reserva in reservas if reserva['nombre'] == nombre and reserva['apellido'] == apellido)
+    reserva_encontrada = list(
+        reserva
+        for reserva in reservas
+        if reserva["nombre"] == nombre and reserva["apellido"] == apellido
+    )
     if not reserva_encontrada:
         return 0
-    return reserva_encontrada[0]['ID']
+    return reserva_encontrada[0]["ID"]
 
 
 def anular_reserva(reservas: List[Dict]):
     if consultar_reserva(reservas):
-        
+
         return reservas
 
 

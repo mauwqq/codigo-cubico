@@ -1,15 +1,6 @@
 """Modulo para imprimir el menu del gestor."""
 
-<<<<<<< HEAD
 from typing import Dict
-=======
-from modulos import tablas_del_sistema
-from modulos import reservas
-from modulos import facturacion
-from typing import List, Dict
-# from modulos.facturacion import emitir_facturas
-import json
->>>>>>> e918dae (modificados facturacion y menu)
 import os
 import time
 from modulos import tablas_del_sistema
