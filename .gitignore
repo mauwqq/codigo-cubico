@@ -1,0 +1,9 @@
+*.*
+!*.py
+!*.json
+!*.csv
+!*.html
+!*.css
+!*.gitignore
+!README.md
+
