@@ -2,7 +2,7 @@ from modulos import reservas
 from modulos import tablas_del_sistema
 from typing import List, Dict
 
-def consultar_consumos(listado_reservas: List[Dict], listado_productos: List[Dict],ID: int) -> float:
+def consultar_consumos(ID: int) -> float:
     '''Busca una reserva por su ID. Toma las cantidades consumidas de cada producto
     que están dentro del listado de reservas y las multiplica por las cantidades 
     consumidas.
@@ -14,12 +14,14 @@ def consultar_consumos(listado_reservas: List[Dict], listado_productos: List[Dic
 
     Post: muestra a través de un print el listado de consumos. Devuelve el importe
     total a facturar.
+    FALTA
     
     '''
     
+    listado_reservas = reservas.consultar_reserva(tablas_del_sistema.cargar_data("data/reservas.json"))
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
-    consumos = [reserva[ID].get("consumos") for reserva in listado_reservas] # VER SI ESTO FUNCIONA
-    if consumos == [0,0,0,0,0]:
+    consumos = [reserva[ID].get("consumos") for reserva in listado_reservas] 
+    if sum(consumos) == 0:
         print(f"La reserva {ID} no posee consumos del frigobar")
     else:
         consumo_total = 0
@@ -73,18 +75,24 @@ def emitir_facturas(listado_reservas: List[Dict]) -> None:
     luego en AFIP.
     '''
     
-    ID = reservas.consultar_reserva(tablas_del_sistema.cargar_data("data/reservas.json"))
-    for reserva in listado_reservas:
-        if reserva["ID"] == ID and reserva["estado"] == "check-out":
+    ID = reservas.consultar_reserva(tablas_del_sistema.cargar_data("data/reservas.json")) # FUNCIONA RARO
+    if ID == 0:
+        print("No existe la reserva consultada")
+    else:
+        reserva_encontrada = list(reserva for reserva in listado_reservas if reserva["ID"] == str(ID))[0]
+        if reserva_encontrada and reserva_encontrada['estado'] != "desocupada":
+            print(f"{reserva_encontrada['estado']}")
+            print(f"Aún no se produjo el check-out para la reserva N° {ID}")
+        else:
             importe_a_facturar = float(input("Ingrese el importe total de la estadía a pagar: "))
             print(f"El importe ingresado es: {importe_a_facturar}")
-            importe_consumos_frigobar = consultar_consumos(ID) # ACÁ NO SÉ CÓMO PASAR LOS PARÁMETROS DE LOS ARCHIVOS.
+            importe_consumos_frigobar = consultar_consumos(ID)
             print(f"El importe de consumos del frigobar es de {importe_consumos_frigobar}")
             importe_total = importe_a_facturar + importe_consumos_frigobar
             print(f"El importe total a facturar es de $ {importe_total}")
             medio_de_pago = input("Ingrese el medio de pago: ")
-            reserva['importe_pagado'] = importe_total
-            reserva['medio_de_pago'] = medio_de_pago
+            reserva_encontrada['importe_pagado'] = importe_total
+            reserva_encontrada['medio_de_pago'] = medio_de_pago
             discriminar_IVA(importe_a_facturar,importe_consumos_frigobar)
 
 def emitir_nota_de_crédito(listado_reservas: List[Dict]) -> None:
@@ -103,7 +111,7 @@ def emitir_nota_de_crédito(listado_reservas: List[Dict]) -> None:
     
     ID = reservas.consultar_reserva(tablas_del_sistema.cargar_data("data/reservas.json"))
     for reserva in listado_reservas:
-        if reserva["ID"] == ID and reserva["estado"] == "check-out":
+        if reserva["ID"] == ID and reserva["estado"] == "desocupada":
             importe_pagado = reserva.get["importe_pagado"]
             importe_a_anular = float(input("Ingrese el importe total a anular en nota de crédito: "))
             print(f"El importe ingresado es: {importe_a_anular}")
