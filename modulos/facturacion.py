@@ -1,6 +1,6 @@
+from typing import List, Dict
 from modulos import reservas
 from modulos import tablas_del_sistema
-from typing import List, Dict
 
 def emitir_facturas(
     listado_reservas: List[Dict], listado_consumos_frigobar: List[Dict]

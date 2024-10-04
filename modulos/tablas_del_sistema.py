@@ -1,7 +1,7 @@
 import re
 import json
-from tabulate import tabulate
 from typing import List, Dict
+from tabulate import tabulate
 
 
 def cargar_data(ruta_archivo: str) -> List[Dict]:
@@ -19,8 +19,7 @@ def cargar_data(ruta_archivo: str) -> List[Dict]:
             try:
                 with open(ruta_archivo, encoding="utf-8") as archivo:
                     return json.load(archivo)
-            except json.JSONDecodeError as e:
-                print("Error: {e}")
+            except json.JSONDecodeError:
                 return []
             except FileNotFoundError:
                 print(f"Error: no se encontro: {ruta_archivo}.")
@@ -39,7 +38,7 @@ def cargar_data(ruta_archivo: str) -> List[Dict]:
             except FileNotFoundError:
                 print(f"No se encontro: {ruta_archivo}")
         case _:
-                print("La extension del archivo es desconocida.")
+            print("La extension del archivo es desconocida.")
 
 
 def imprimir_tabla(ruta_archivo: str) -> None:

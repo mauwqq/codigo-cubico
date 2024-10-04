@@ -1,12 +1,11 @@
 """Modulo para imprimir el menu del gestor."""
 
-from modulos import tablas_del_sistema
-from modulos import reservas
-from typing import List, Dict
-# from modulos.facturacion import emitir_facturas
-import json
+from typing import Dict
 import os
 import time
+from modulos import tablas_del_sistema
+from modulos import reservas
+# from modulos.facturacion import emitir_facturas
 
 def clear() -> None:
     """Limpia la consola (pantalla) del terminal."""
@@ -217,4 +216,4 @@ def menu_tablas_del_sistema(config: Dict[str, Dict[str, str]]) -> None:
 
 
 if __name__ == "__main__":
-   menu_principal()
+    menu_principal()
