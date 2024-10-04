@@ -1,6 +1,15 @@
 """Modulo para imprimir el menu del gestor."""
 
+<<<<<<< HEAD
 from typing import Dict
+=======
+from modulos import tablas_del_sistema
+from modulos import reservas
+from modulos import facturacion
+from typing import List, Dict
+# from modulos.facturacion import emitir_facturas
+import json
+>>>>>>> e918dae (modificados facturacion y menu)
 import os
 import time
 from modulos import tablas_del_sistema
@@ -174,8 +183,7 @@ def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_facturacion", config)
     match op:
         case 1:
-            # emitir_facturas(cargar_data("data/productos.csv"), cargar_data("data/consumos.csv"))
-            no_implementado()
+            facturacion.emitir_facturas(tablas_del_sistema.cargar_data("data/reservas.json"))
         case 2:
             no_implementado()
         case 3:
