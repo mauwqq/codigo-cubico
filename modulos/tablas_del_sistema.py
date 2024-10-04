@@ -37,7 +37,7 @@ def cargar_data(ruta_archivo: str) -> List[Dict]:
                     data.append(elementos)
                 return data
             except FileNotFoundError:
-                print(f"No se encontro: {ruta_archivo}") 
+                print(f"No se encontro: {ruta_archivo}")
         case _:
                 print("La extension del archivo es desconocida.")
 
@@ -55,3 +55,7 @@ def imprimir_tabla(ruta_archivo: str) -> None:
     if not data:
         print(f"No hay registros de {re.split("[/.]",ruta_archivo)[1]}.")
     print(tabulate(data, headers="keys", tablefmt="rounded_grid"))
+
+
+def escribir_cambios(data: List[Dict], ruta: str) -> None:
+    pass
