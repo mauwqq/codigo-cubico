@@ -1,8 +1,34 @@
 from typing import Tuple, Callable, Dict, List
 import re
+from datetime import datetime
 
+meses = {
+    1: 31,
+    2: 28,
+    3: 31,
+    4: 30,
+    5: 31,
+    6: 30,
+    7: 31,
+    8: 31,
+    9: 30,
+    10: 31,
+    11: 30,
+    12: 31,
+}
 
-def pedir(validar: Callable[[str], str], msj: str) -> str:
+errores = {
+    "nombre": {
+        "vacío": "El nombre no puede estar vacío.",
+        "invalido": "El nombre debe ser una sola palabra sin espacios ni símbolos.",
+    },
+    "apellido": {
+        "vacío": "El apellido no puede estar vacío.",
+        "invalido": "El apellido debe ser una sola palabra sin espacios ni símbolos.",
+    },
+}
+
+def solicitar_input(validacion: Callable[[str], str], msj: str) -> str:
     """Solicita un valor al usuario y lo valida con la función dada.
 
     Pre: validar es una función que recibe una cadena y devuelve una cadena.
@@ -13,7 +39,7 @@ def pedir(validar: Callable[[str], str], msj: str) -> str:
     """
     while True:
         try:
-            return validar(input(msj))
+            return validacion(input(msj))
         except ValueError as e:
             print(e)
 
@@ -35,7 +61,7 @@ def validar_con_regex(
 
     """
     valor = valor.strip()
-    if permitir_vacio and valor == "":
+    if permitir_vacio and not valor:
         return ""
     if not valor:
         raise ValueError(mensajes["vacío"])
@@ -46,7 +72,7 @@ def validar_con_regex(
     return valor.title()
 
 
-def validar_dni(dni: str) -> int:
+def validar_dni(dni: str) -> int: # dni tambien puede ser len(7)
     """Valida que el DNI ingresado tenga el formato correcto.
 
     Pre: dni es una cadena que representa el DNI.
@@ -55,7 +81,7 @@ def validar_dni(dni: str) -> int:
           ValueError si el DNI no es válido.
 
     """
-    dni = re.sub(r'\D', '', dni)
+    dni = re.sub(r"\D", "", dni)
     if len(dni) != 8:
         raise ValueError("El DNI debe contener 8 caracteres numéricos.")
     return int(dni)
@@ -81,7 +107,7 @@ def validar_domicilio(campo: str, valor: str) -> str:
             "La altura no puede estar vacía.",
             "La altura debe ser un número entero.",
         ),
-        "Piso": (r"^\d*$", "Ingrese un piso válido.", "El piso no puede estar vacío."),
+        "Piso": (r"^\d*$", "Ingrese un piso válido.", ""),
         "Departamento": (
             r"^[a-zA-Z0-9 ]*$",
             "El departamento no puede tener símbolos.",
@@ -99,7 +125,7 @@ def validar_domicilio(campo: str, valor: str) -> str:
         ),
     }
     patron, mensaje_vacio, mensaje_invalido = validaciones[campo]
-    verificar_longitud = campo != "Altura"
+    verificar_longitud = campo in ["Localidad", "Provincia"]
     permitir_vacio = campo in ["Piso", "Departamento"]
     return validar_con_regex(
         patron,
@@ -110,7 +136,7 @@ def validar_domicilio(campo: str, valor: str) -> str:
     )
 
 
-def pedir_datos_domicilio() -> Tuple[str, str, str, int, str, str]:
+def solicitar_datos_domicilio() -> Tuple[str, str, str, int, str, str]:
     """Solicita y valida los datos de domicilio al usuario.
 
     Pre: No recibe nada.
@@ -126,18 +152,19 @@ def pedir_datos_domicilio() -> Tuple[str, str, str, int, str, str]:
         ("Calle", True),
         ("Altura", True),
         ("Piso", False),
-        ("Departamento", False)
+        ("Departamento", False),
     ]
-    datos_domicilio = [
-        pedir(
-            lambda x: validar_domicilio(campo, x), f"{campo}: " if requerido else f"{campo} ('Enter' si no aplica): "
+    datos_domicilio = {
+        campo: solicitar_input(
+            lambda x: validar_domicilio(campo, x),
+            f"{campo}: " if requerido else f"{campo} ('Enter' si no aplica): ",
         )
         for campo, requerido in campos
-    ]
+    }
     return datos_domicilio
 
 
-def pedir_datos_cliente() -> Tuple[str, str, int, str, str, str, int, str, str]:
+def solicitar_datos_cliente() -> Tuple[str, str, int, str, str, str, int, str, str]:
     """Solicita y valida los datos del cliente.
 
     Pre: No recibe nada.
@@ -146,39 +173,191 @@ def pedir_datos_cliente() -> Tuple[str, str, int, str, str, str, int, str, str]:
           (Nombre, Apellido, DNI, Calle, Altura, Piso, Departamento, Localidad, Provincia).
 
     """
-    errores = {
-        "nombre": {
-            "vacío": "El nombre no puede estar vacío.",
-            "invalido": "El nombre debe ser una sola palabra sin espacios ni símbolos.",
-        },
-        "apellido": {
-            "vacío": "El apellido no puede estar vacío.",
-            "invalido": "El apellido debe ser una sola palabra sin espacios ni símbolos.",
-        },
-    }
-    nombre = pedir(
+
+    nombre = solicitar_input(
         lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["nombre"]),
         "Nombre: ",
     )
-    apellido = pedir(
+    apellido = solicitar_input(
         lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["apellido"]),
         "Apellido: ",
     )
-    dni = pedir(validar_dni, "DNI: ")
-    # El '*' o 'unpacking' expande la tupla con los valores que retorna pedir_datos_domicilio().
-    return (nombre, apellido, dni, *pedir_datos_domicilio())
+    dni = solicitar_input(validar_dni, "DNI: ")
+    domicilio = solicitar_datos_domicilio()
+    return (
+        nombre,
+        apellido,
+        dni,
+        domicilio["Calle"],
+        domicilio["Altura"],
+        domicilio["Piso"],
+        domicilio["Departamento"],
+        domicilio["Localidad"],
+        domicilio["Provincia"],
+    )
+
+
+def comprobar_bisiesto(anio: int) -> bool:
+    """Comprueba si un año es bisiesto.
+
+    Pre: Recibe el año como un número entero.
+
+    Post: Si el entero es divisible por cuatro y no es divisible
+          por 100, o es divisible por 400 es bisiesto y devuelve True, si no False.
+
+    """
+    return (anio % 4 == 0) and (anio % 100 != 0) or (anio % 400 == 0)
+
+
+def verificar_fecha_valida(dia: int, mes: int, anio: int) -> bool:
+    """Valida si la fecha dada es correcta según el formato DDMMAAAA.
+
+    Pre: fecha debe ser un string en formato DDMMAAAA.
+
+    Post: Retorna True si la fecha es válida, y False en caso contrario,
+          considerando el número de días de cada mes y los años bisiestos.
+
+    """
+    if comprobar_bisiesto(anio):
+        meses.update({2: 29})
+    return (mes in meses) and (dia <= meses.get(mes))
+
+
+def pedir_num(msj: str) -> int:
+    """Pide un numero al usuario y lo devuelve.
+
+    Pre: No recibe nada.
+
+    Post: Devuelve n un numero entero.
+
+    """
+    while True:
+        try:
+            n = int(input(msj))
+            if n > 0:
+                break
+        except ValueError:
+            print("Debe ingresar un numero valida.")
+    return n
+
+
+def pedir_fecha(msj: str) -> str:
+    """Pide un numero al usuario y lo devuelve.
+
+    Pre: No recibe nada.
+
+    Post: Devuelve n un numero entero.
+
+    """
+    while True:
+        try:
+            fecha = input(msj)
+            if len(fecha) == 8 and fecha.isdigit():
+                break
+            raise ValueError()
+        except ValueError:
+            print("Debe ingresar una fecha valida. En formato DDMMAAAA.")
+    return fecha
+
+
+def validar_fecha(fecha_inicio: List[str], fecha_fin: List[str] = None) -> bool:
+    """Valida que la fecha de inicio sea mayor a la actual o que la fecha de fin sea mayor que la de inicio.
+
+    Pre: fecha_inicio y fecha_fin son listas en el formato [DD, MM, AAAA].
+         Si fecha_fin no se proporciona, se compara fecha_inicio con la fecha actual.
+
+    Post: Retorna True si la fecha de fin es mayor a la de inicio, o si la fecha de inicio es mayor a la actual.
+
+    """
+    anio_i, mes_i, dia_i = fecha_inicio[2], fecha_inicio[1], fecha_inicio[0]
+    if fecha_fin is None:
+        anio_actual, mes_actual, dia_actual = str(datetime.now().date()).split("-")
+        return (anio_i, mes_i, dia_i) > (anio_actual, mes_actual, dia_actual)
+    anio_f, mes_f, dia_f = fecha_fin[2], fecha_fin[1], fecha_fin[0]
+    return (anio_f, mes_f, dia_f) > (anio_i, mes_i, dia_i)
+
+
+def validar_ingreso_fecha(msj: str) -> List[int]:
+    while True:
+        try:
+            fecha = re.split(r"(\d{2})(\d{2})(\d{4})", pedir_fecha(msj))[1:-1]
+            if verificar_fecha_valida(
+                int(fecha[0]), int(fecha[1]), int(fecha[2])
+            ) and validar_fecha(fecha):
+                break
+            raise ValueError("Ingrese una fecha valida.")
+        except ValueError as e:
+            print(e)
+    return fecha
 
 
 def registrar_reserva(reservas: List[Dict]):
-    pedir_datos_cliente()
+    """Registra una nueva reserva en la lista de reservas.
+
+    Pre: reservas es una lista de diccionarios que contiene todas las reservas.
+
+    Post: Agrega una nueva reserva a la lista de reservas con todos los datos validados.
+
+    """
+    nombre, apellido, dni, calle, altura, piso, dpto, localidad, provincia = (
+        solicitar_datos_cliente()
+    )
+    print(nombre, apellido, dni, calle, altura, piso, dpto, localidad, provincia)
+    n_habitacion = pedir_num("Ingrese el número de habitación donde se alojará: ")
+    fecha_reserva = str(datetime.now().date()).replace("-", "/")
+    while True:
+        try:
+            fecha_i = validar_ingreso_fecha(
+                "Ingrese el inicio de la estadía (DDMMAAAA): "
+            )
+            fecha_f = validar_ingreso_fecha("Ingrese el fin de la estadía (DDMMAAAA): ")
+            if validar_fecha(fecha_i, fecha_f):
+                break
+            raise ValueError(
+                "Error: La fecha de fin debe ser posterior a la fecha de inicio."
+            )
+        except ValueError as e:
+            print(e)
+    reserva = {
+        "ID": len(reservas)+1,
+        "nombre": nombre,
+        "apellido": apellido,
+        "dni": dni,
+        "provincia": provincia,
+        "localidad": localidad,
+        "calle": calle,
+        "altura": altura,
+        "piso": piso if piso else '',
+        "departamento": dpto if dpto else '',
+        "n_habitacion": n_habitacion,
+        "fecha_reserva": fecha_reserva,
+        "fecha_inicio": "/".join(fecha_i),
+        "fecha_fin": "/".join(fecha_f),
+    }
+    reservas.append(reserva)
+    print("Reserva registrada con éxito.")
+    return reservas
 
 
 def consultar_reserva(reservas: List[Dict]):
-    pass
+    nombre = solicitar_input(
+        lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["nombre"]),
+        "Nombre: ",
+    )
+    apellido = solicitar_input(
+        lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["apellido"]),
+        "Apellido: ",
+    )
+    reserva_encontrada = list(reserva for reserva in reservas if reserva['nombre'] == nombre and reserva['apellido'] == apellido)
+    if not reserva_encontrada:
+        return 0
+    return reserva_encontrada[0]['ID']
 
 
 def anular_reserva(reservas: List[Dict]):
-    pass
+    if consultar_reserva(reservas):
+        
+        return reservas
 
 
 def registrar_check_in(reservas: List[Dict]):
@@ -187,7 +366,3 @@ def registrar_check_in(reservas: List[Dict]):
 
 def registrar_check_out(reservas: List[Dict]):
     pass
-
-
-if __name__ == "__main__":
-    print(pedir_datos_cliente())
