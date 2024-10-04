@@ -18,14 +18,17 @@ def consultar_consumos(listado_reservas: List[Dict], listado_productos: List[Dic
     '''
     
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
-    for reserva in listado_reservas:
-        consumos = reserva.get("consumos") # ES UNA LISTA DE CONSUMOS QUE VIENE DE RESERVAS, VER SI FUNCIONA. LO PROBÉ PASANDO LA LISTA A MANO Y SÍ.
-    consumo_total = 0
-    for i, (codigo, productos) in enumerate(listado_productos.items()):
-        nombre_producto = productos.get("NOMBRE")
-        precio_producto = productos.get("PRECIO_U")
-        consumo_total += precio_producto*consumos[i]
-        print(f"{nombre_producto} - Precio unitario: {precio_producto} - Cantidad: {consumos[i]} - Total: {precio_producto*consumos[i]}")
+    consumos = [reserva[ID].get("consumos") for reserva in listado_reservas] # VER SI ESTO FUNCIONA
+    if consumos == [0,0,0,0,0]:
+        print(f"La reserva {ID} no posee consumos del frigobar")
+    else:
+        consumo_total = 0
+        for i, (codigo, productos) in enumerate(listado_productos.items()):
+            nombre_producto = productos.get("NOMBRE")
+            precio_producto = productos.get("PRECIO_U")
+            consumo_total += precio_producto*consumos[i]
+            if consumos[i] > 0:
+                print(f"{nombre_producto} - Precio unitario: {precio_producto} - Cantidad: {consumos[i]} - Total: {precio_producto*consumos[i]}")
 
     return consumo_total
 
