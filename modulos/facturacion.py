@@ -119,7 +119,7 @@ def emitir_facturas(listado_reservas: List[Dict]) -> None:
             discriminar_IVA(importe_a_facturar, importe_consumos_frigobar)
 
 
-def emitir_nota_de_crédito(listado_reservas: List[Dict]) -> None:
+def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
     """Busca una reserva por su ID. Si el estado es "check-out" pide el importe a
     anular, ya que una nota de crédito implica la disminución del importe
     original. Pregunta el importe a anular. Pregunta la condición frente al IVA. En caso
