@@ -74,7 +74,7 @@ def validar_con_regex(
     return valor.title()
 
 
-def validar_dni(dni: str) -> int:  # dni tambien puede ser len(7)
+def validar_dni(dni: str) -> int:
     """Valida que el DNI ingresado tenga el formato correcto.
 
     Pre: dni es una cadena que representa el DNI.
@@ -84,8 +84,8 @@ def validar_dni(dni: str) -> int:  # dni tambien puede ser len(7)
 
     """
     dni = re.sub(r"\D", "", dni)
-    if len(dni) != 8:
-        raise ValueError("El DNI debe contener 8 caracteres numéricos.")
+    if len(dni) > 8 or len(dni) < 7:
+        raise ValueError("El DNI debe contener entre 7 o 8 caracteres numéricos.")
     return int(dni)
 
 
@@ -175,7 +175,6 @@ def solicitar_datos_cliente() -> Tuple[str, str, int, str, str, str, int, str, s
           (Nombre, Apellido, DNI, Calle, Altura, Piso, Departamento, Localidad, Provincia).
 
     """
-
     nombre = solicitar_input(
         lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["nombre"]),
         "Nombre: ",
@@ -263,7 +262,8 @@ def pedir_fecha(msj: str) -> str:
 
 
 def validar_fecha(fecha_inicio: List[str], fecha_fin: List[str] = None) -> bool:
-    """Valida que la fecha de inicio sea mayor a la actual o que la fecha de fin sea mayor que la de inicio.
+    """Valida que la fecha de inicio sea mayor a la actual o que la fecha de fin
+    sea mayor que la de inicio.
 
     Pre: fecha_inicio y fecha_fin son listas en el formato [DD, MM, AAAA].
          Si fecha_fin no se proporciona, se compara fecha_inicio con la fecha actual.
@@ -281,6 +281,14 @@ def validar_fecha(fecha_inicio: List[str], fecha_fin: List[str] = None) -> bool:
 
 
 def validar_ingreso_fecha(msj: str) -> List[int]:
+    """Valida y solicita una fecha de ingreso al usuario.
+
+    Pre: msj es un mensaje que se muestra al usuario para solicitar la fecha.
+
+    Post: Retorna una lista con la fecha ingresada en formato [DD, MM, AAAA].
+          Si la fecha ingresada no es válida, solicita nuevamente la entrada hasta que sea correcta.
+
+    """
     while True:
         try:
             fecha = re.split(r"(\d{2})(\d{2})(\d{4})", pedir_fecha(msj))[1:-1]
@@ -342,7 +350,15 @@ def registrar_reserva(reservas: List[Dict]):
     return reservas
 
 
-def consultar_reserva(reservas: List[Dict]):
+def consultar_reserva(reservas: List[Dict]) -> int:
+    """Pide el nombre y apellido del huesped y busca si tiene una reserva hecha,
+    si la encuentra la devuelve, sino devuelve 0.
+
+    Pre: reservas es la lista de diccionarios donde cada diccionario es una reserva.
+
+    Post: Si encuentra la reserva, devuelve el id de la reserva, sino, devuelve 0.
+
+    """
     nombre = solicitar_input(
         lambda x: validar_con_regex(r"^[a-zA-Z]+$", x, errores["nombre"]),
         "Nombre: ",
@@ -358,7 +374,7 @@ def consultar_reserva(reservas: List[Dict]):
     )
     if not reserva_encontrada:
         return 0
-    return reserva_encontrada[0]["ID"]
+    return int(reserva_encontrada[0]["ID"])
 
 
 def anular_reserva(reservas: List[Dict]) -> None:
