@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from modulos import reservas
 from modulos import tablas_del_sistema
 
