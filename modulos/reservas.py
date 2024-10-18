@@ -360,10 +360,25 @@ def consultar_reserva(reservas: List[Dict]):
     return reserva_encontrada[0]["ID"]
 
 
-def anular_reserva(reservas: List[Dict]):
-    if consultar_reserva(reservas):
+def anular_reserva(reservas: List[Dict]) -> None:
+    """Anula una reserva cambiando su estado a 'cancelada'.
 
-        return reservas
+    Pre: reservas es la lista de diccionarios donde cada diccionario es una reserva.
+
+    Post: Si encuentra la reserva, cambia el estado a 'cancelada' y la retorna.
+          Si no encuentra la reserva, devuelve la lista original.
+
+    """
+    id_reserva = consultar_reserva(reservas)
+    if not id_reserva:
+        print("No se encontró ninguna reserva con esos datos.")
+        return None
+    for reserva in reservas:
+        if reserva["ID"] == str(id_reserva):
+            reserva["estado"] = "cancelada"
+            print(f"Reserva {id_reserva} cancelada exitosamente.")
+            tablas_del_sistema.guardar_data(reservas, "data/reservas.json")
+    return None
 
 
 def registrar_check_in(reservas: List[Dict]):
