@@ -2,80 +2,73 @@ from typing import List, Dict
 from modulos import reservas
 from modulos import tablas_del_sistema
 
-
-def consultar_consumos(ID: int) -> float:
-    """Busca una reserva por su ID. Toma las cantidades consumidas de cada producto
-    que están dentro del listado de reservas y las multiplica por las cantidades
-    consumidas.
-    Muestra un listado de productos consumidos y el importe total.
-
-    Pre: el listado de reservas se trae de reservas.json y el de productos
-    de productos.csv a través de la función cargar_data dentro de tablas_del_sistema.
-    El ID se pasa como parámetro desde la función emitir_facturas.
-
-    Post: muestra a través de un print el listado de consumos. Devuelve el importe
-    total a facturar.
-    FALTA
-
-    """
-
-    listado_reservas = reservas.consultar_reserva(
-        tablas_del_sistema.cargar_data("data/reservas.json")
-    )
-    listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
-    consumos = [reserva[ID].get("consumos") for reserva in listado_reservas]
-    if sum(consumos) == 0:
-        print(f"La reserva {ID} no posee consumos del frigobar")
-    else:
-        consumo_total = 0
-        for i, (codigo, productos) in enumerate(listado_productos.items()):
-            nombre_producto = productos.get("NOMBRE")
-            precio_producto = productos.get("PRECIO_U")
-            consumo_total += precio_producto * consumos[i]
-            if consumos[i] > 0:
-                print(
-                    f"{nombre_producto} - Precio unitario: {precio_producto} - Cantidad: {consumos[i]} - Total: {precio_producto*consumos[i]}"
-                )
-
-    return consumo_total
-
-
-def discriminar_IVA(importe_hospedaje: float, importe_frigobar: float) -> None:
-    """Consulta la condición frente al IVA del cliente. Si es Responsable Incripto (RI)
-    o monotributista, discriminará el IVA de los importes totales, separando
-    el hospedaje de los consumos del frigobar. Si es consumidor final o exento
-    no discriminará el IVA.
+def pedir_num(msj: str, tipo):
+    """Pide un numero y lo devuelve.
 
     Pre: msj es un string.
          tipo es el tipo de valor que va a pedir, puede ser un entero o un flotante.
 
     Post: Devuelve el numero ingresado si no es negativo.
 
-    Post: no devolverá nada sino que imrpmimirá el neto, IVA y total, separando
-    hospedaje de consumos del frigobar.
     """
     while True:
         try:
-            condicion_IVA = int(
-                input(
-                    "Indique la condición frente al IVA del cliente, siendo 1 para monotributo o RI y 2 para consumidor final o exento"
-                )
+            n = tipo(input(msj))
+            if n > 0:
+                break
+            raise ValueError("El valor ingresado debe ser positivo.")
+        except ValueError as e:
+            if "could not convert" in str(e):
+                print("Ingrese un número válido.")
+            else:
+                print(e)
+    return n
+
+
+def imprimir_detalles_iva(etiqueta: str, importe: float, discriminar: bool) -> None:
+    """Imprime los detalles del IVA para el importe dado.
+
+    Pre: etiqueta indica si es 'Hospedaje' o 'Consumos frigobar', importe es el monto a procesar,
+         y discriminar indica si debe discriminar IVA o no.
+
+    Post: Muestra el neto, el IVA y el total en caso de que deba discriminar IVA,
+          o solo el total en caso contrario.
+
+    """
+    if discriminar:
+        neto = round(importe / 1.21, 2)
+        iva = round(importe * 0.21, 2)
+        print(f"{etiqueta}: neto $ {neto} - IVA $ {iva} - Total $ {importe}")
+    else:
+        print(f"{etiqueta}: Total $ {importe:.2f}")
+    return None
+
+
+def discriminar_iva() -> bool:
+    """Consulta la condición frente al IVA del cliente y retorna discriminar.
+
+    Pre: El importe del hospedaje y el de los consumos del frigobar.
+
+    Post: Devuelve discriminar, un booleano.
+
+    """
+    while True:
+        try:
+            condicion_iva = pedir_num(
+                "Indique la condición frente al IVA (1-Monotributo o RI, 2-Consumidor final): ",
+                int,
             )
-            if condicion_IVA == 1:
-                print(
-                    f"Hospedaje: neto $ {importe_hospedaje / 1.21} - IVA $ {importe_hospedaje * 0.21} - Total $ {importe_hospedaje}"
+            if condicion_iva not in [1, 2]:
+                raise ValueError(
+                    "Ingrese 1 para monotributo o RI y 2 para consumidor final."
                 )
-                print(
-                    f"Consumos frigobar: neto $ {importe_frigobar / 1.21} - IVA $ {importe_frigobar * 0.21} - Total $ {importe_frigobar}"
-                )
-            if condicion_IVA == 2:
-                print(f"Hospedaje: Total $ {importe_hospedaje}")
-                print(f"Consumos frigobar: Total $ {importe_frigobar}")
-        except ValueError:
-            print("Ingrese un número válido")
+            discriminar = bool(condicion_iva == 1)
+            return discriminar
+        except ValueError as mensaje:
+            print(mensaje)
 
 
-def emitir_facturas(listado_reservas: List[Dict]) -> None:
+def emitir_factura(listado_reservas: List[Dict]) -> None:
     """Busca una reserva por su ID. Si el estado es "check-out" pide el importe de la estadía.
     Lo muestra. También muestra el total detallado de los consumos del frigobar, tomando
     los precios de los productos desde productos.json y multiplicando por lo consumido que
@@ -89,34 +82,65 @@ def emitir_facturas(listado_reservas: List[Dict]) -> None:
 
     Post: no tiene un return sino que muestra en pantalla lo que se debe facturar
     luego en AFIP.
+
     """
-    ID = reservas.consultar_reserva(
+    id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
-    )  # FUNCIONA RARO
-    if ID == 0:
-        print("No existe la reserva consultada")
+    )
+    if id_ == 0:
+        print("No se encontro la reserva.")
+        return None
+
+    listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+    reserva_encontrada = list(
+        reserva for reserva in listado_reservas if reserva["ID"] == str(id_)
+    )[0]
+    if reserva_encontrada and reserva_encontrada["estado"] != "desocupada":
+        print(f"Aún no se produjo el check-out para la reserva N° {id_}")
+        return None
+
+    importe_a_facturar = pedir_num(
+        "Ingrese el importe total de la estadía a pagar: ", float
+    )
+    consumos = reserva_encontrada.get("consumos", [])
+    consumo_total = calcular_consumo_total(consumos, listado_productos)
+    print(f"El importe ingresado es: {importe_a_facturar}")
+    if sum(consumos) == 0:
+        print(f"La reserva {id_} no posee consumos del frigobar.")
     else:
-        reserva_encontrada = list(
-            reserva for reserva in listado_reservas if reserva["ID"] == str(ID)
-        )[0]
-        if reserva_encontrada and reserva_encontrada["estado"] != "desocupada":
-            print(f"{reserva_encontrada['estado']}")
-            print(f"Aún no se produjo el check-out para la reserva N° {ID}")
-        else:
-            importe_a_facturar = float(
-                input("Ingrese el importe total de la estadía a pagar: ")
-            )
-            print(f"El importe ingresado es: {importe_a_facturar}")
-            importe_consumos_frigobar = consultar_consumos(ID)
-            print(
-                f"El importe de consumos del frigobar es de {importe_consumos_frigobar}"
-            )
-            importe_total = importe_a_facturar + importe_consumos_frigobar
-            print(f"El importe total a facturar es de $ {importe_total}")
-            medio_de_pago = input("Ingrese el medio de pago: ")
-            reserva_encontrada["importe_pagado"] = importe_total
-            reserva_encontrada["medio_de_pago"] = medio_de_pago
-            discriminar_IVA(importe_a_facturar, importe_consumos_frigobar)
+        for i, producto in enumerate(listado_productos):
+            precio_producto = producto.get("PRECIO_U", 0)
+            cantidad_consumo = consumos[i]
+            total_consumo = float(precio_producto) * cantidad_consumo
+            if total_consumo:
+                print(
+                    f"{producto['NOMBRE']} - Precio unitario: {precio_producto} - Cantidad: {cantidad_consumo} - Total: {total_consumo}"
+                )
+    print(f"El importe de consumos del frigobar es de {consumo_total}")
+    importe_total = importe_a_facturar + consumo_total
+    print(f"El importe total a facturar es de $ {importe_total}")
+    medio_de_pago = pedir_num("Ingrese el medio de pago: ", int)
+    discriminar = discriminar_iva()
+    imprimir_factura(importe_a_facturar, consumo_total, medio_de_pago, discriminar)
+    reserva_encontrada["importe_pagado"] = importe_a_facturar + consumo_total
+    reserva_encontrada["medio_de_pago"] = medio_de_pago
+    tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
+    return None
+
+
+def calcular_consumo_total(consumos: List[int], listado_productos: List[Dict]) -> float:
+    """Calcula el consumo total basado en los consumos y los precios de los productos.
+
+    Pre: consumos es una lista de numeros enteros.
+         listado_productos es una lista de diccionarios.
+
+    Post: devuelve la suma del consumo del frigobar, en flotante.
+
+    """
+    return sum(
+        float(producto.get("PRECIO_U", 0)) * consumo
+        for producto, consumo in zip(listado_productos, consumos)
+    )
 
 
 def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
@@ -131,16 +155,47 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
 
     Post: no tiene un return sino que muestra en pantalla el importe que
     debe cargar en la nota de crédito luego en AFIP.
+
     """
-    ID = reservas.consultar_reserva(
+    id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
     )
-    for reserva in listado_reservas:
-        if reserva["ID"] == ID and reserva["estado"] == "desocupada":
-            importe_pagado = reserva.get["importe_pagado"]
-            importe_a_anular = float(
-                input("Ingrese el importe total a anular en nota de crédito: ")
-            )
-            print(f"El importe ingresado es: {importe_a_anular}")
-            reserva["importe_pagado"] = importe_pagado - importe_a_anular
-            discriminar_IVA(importe_a_anular, 0)
+    if id_ == 0:
+        print("No se encontro la reserva.")
+        return None
+
+    reserva_encontrada = list(
+        reserva for reserva in listado_reservas if reserva["ID"] == str(id_)
+    )[0]
+    if reserva_encontrada["estado"] == "desocupada":
+        importe_pagado = reserva_encontrada.get("importe_pagado", 0)
+        importe_a_anular = pedir_num(
+            "Ingrese el importe total a anular en nota de crédito: ", float
+        )
+        print(f"El importe ingresado es: {importe_a_anular}")
+        reserva_encontrada["importe_pagado"] = importe_pagado - importe_a_anular
+        discriminar_iva()
+    return None
+
+
+def imprimir_factura(
+    importe_a_facturar: float,
+    consumo_total: float,
+    medio_de_pago: str,
+    discriminar: bool,
+) -> None:
+    """
+    Imprime los detalles de la factura, incluyendo consumos, IVA, y medios de pago.
+
+    Pre: importe_a_facturar es un flotante.
+         consumo_total es un flotante.
+         medio_de_pago es un string.
+         discriminar es un booleano.
+
+    Post: No devuelve nada.
+
+    """
+    print(f"Medio de pago: {medio_de_pago}")
+    imprimir_detalles_iva("Hospedaje", importe_a_facturar, discriminar)
+    imprimir_detalles_iva("Frigobar", consumo_total, discriminar)
+    return None
