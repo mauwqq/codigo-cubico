@@ -54,7 +54,47 @@ def imprimir_tabla(ruta_archivo: str) -> None:
     if not data:
         print(f"No hay registros de {re.split("[/.]",ruta_archivo)[1]}.")
     print(tabulate(data, headers="keys", tablefmt="rounded_grid"))
+    return None
 
 
-def escribir_cambios(data: List[Dict], ruta: str) -> None:
-    pass
+def guardar_data(data: List[Dict], ruta: str) -> None:
+    """Guarda los datos en un archivo JSON o CSV.
+
+    Pre: Recibe una lista de diccionarios 'data' y una cadena 'ruta' que representa
+         la ruta del archivo donde se guardarán los datos. La extensión del archivo
+         debe ser .json o .csv.
+
+    Post: Guarda los datos en el archivo especificado. Si ocurre un error,
+          informa al usuario.
+
+    """
+    extension = ruta.split(".")[1]
+    match extension:
+        case "json":
+            try:
+                with open(ruta, "w", encoding="utf-8") as archivo:
+                    json.dump(data, archivo, indent=4)
+                print("Datos guardados exitosamente.")
+            except Exception as e:
+                print(f"Error al guardar los datos en JSON: {e}")
+        case "csv":
+            try:
+                if not data:
+                    raise ValueError(
+                        f"No hay datos para guardar en el archivo CSV: {ruta}."
+                    )
+                headers = data[0].keys()
+                with open(ruta, mode="w", encoding="utf-8") as archivo:
+                    archivo.write(",".join(headers) + "\n")
+                    for linea in data:
+                        archivo.write(
+                            ",".join(f'"{linea[header]}"' for header in headers) + "\n"
+                        )
+                print("Datos guardados exitosamente.")
+            except Exception as e:
+                print(f"Error al guardar los datos en CSV: {e}")
+        case _:
+            print(
+                f"Extensión de archivo desconocida: {extension}. No se guardaron datos."
+            )
+    return None

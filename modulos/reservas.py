@@ -267,7 +267,8 @@ def validar_fecha(fecha_inicio: List[str], fecha_fin: List[str] = None) -> bool:
     Pre: fecha_inicio y fecha_fin son listas en el formato [DD, MM, AAAA].
          Si fecha_fin no se proporciona, se compara fecha_inicio con la fecha actual.
 
-    Post: Retorna True si la fecha de fin es mayor a la de inicio, o si la fecha de inicio es mayor a la actual.
+    Post: Retorna True si la fecha de fin es mayor a la de inicio, o si la fecha de
+          inicio es mayor a la actual. 
 
     """
     anio_i, mes_i, dia_i = fecha_inicio[2], fecha_inicio[1], fecha_inicio[0]
