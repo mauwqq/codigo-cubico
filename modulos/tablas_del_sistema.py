@@ -54,8 +54,9 @@ def imprimir_tabla(ruta_archivo: str) -> None:
     """
     data = cargar_data(ruta_archivo)
     if not data:
-        print(f"No hay registros de {re.split("[/.]",ruta_archivo)[1]}.")
-    print(tabulate(data, headers="keys", tablefmt="rounded_grid"))
+        print(f"No hay registros en {re.split('[/.]', ruta_archivo)[1]}.")
+    else:
+        print(tabulate(data, headers="keys", tablefmt="rounded_grid"))
     return None
 
 
