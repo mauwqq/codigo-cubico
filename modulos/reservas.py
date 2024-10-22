@@ -1,6 +1,7 @@
 from typing import Tuple, Callable, Dict, List
 import re
 from datetime import datetime
+from modulos import tablas_del_sistema
 
 meses = {
     1: 31,
