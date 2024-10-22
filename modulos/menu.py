@@ -177,7 +177,7 @@ def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_facturacion", config)
     match op:
         case 1:
-            facturacion.emitir_facturas(
+            facturacion.emitir_factura(
                 tablas_del_sistema.cargar_data("data/reservas.json")
             )
             if input("Presione 'Enter' para volver al menu.") == "":
