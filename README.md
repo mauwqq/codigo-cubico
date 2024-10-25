@@ -1,25 +1,26 @@
-*** EQUIPO: CÓDIGO CÚBICO ***
+# Equipo: **Código Cúbico**
 
-SISTEMA: GESTIÓN DE RESERVAS HOTELERAS
+## Sistema: Gestión de Reservas Hoteleras
 
-*** DESARROLLO DE FUNCIONES ***
+### Desarrollo de Funciones
 
-POR HACER:
-* Visualizar reservas
+#### Por Hacer
+- Visualizar reservas
 
-HACIENDO:
+#### Haciendo
+*(Actualmente no hay tareas en proceso)*
 
-
-HECHAS:
-* Registrar reservas
-* Datos de las reservas
-* Anular reservas
-* Registrar check-in
-* Registrar check-out
-* Registrar consumos (frigobar)
-* Anular consumos
-* Emitir facturas
-* Emitir notas de crédito
-* Tablas del sistema: imprimir tabla, cargar data, guardar data
-
-
+#### Hechas
+- Registrar reservas
+- Datos de las reservas
+- Anular reservas
+- Registrar check-in
+- Registrar check-out
+- Registrar consumos (frigobar)
+- Anular consumos
+- Emitir facturas
+- Emitir notas de crédito
+- Tablas del sistema:
+  - Imprimir tabla
+  - Cargar data
+  - Guardar data
