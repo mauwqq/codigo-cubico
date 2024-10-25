@@ -27,7 +27,6 @@
     "menu_facturacion": {
         "1": "Emitir facturas",
         "2": "Emitir notas de crédito",
-        "3": "Consultar comprobantes",
         "0": "Menú principal"
     },
     "menu_tablas_del_sistema": {

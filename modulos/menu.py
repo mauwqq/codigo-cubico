@@ -6,6 +6,7 @@ import time
 from modulos import tablas_del_sistema
 from modulos import reservas
 from modulos import facturacion
+from modulos import consumos
 
 
 def clear() -> None:
@@ -182,9 +183,15 @@ def menu_consumo_frigobar(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_consumo_frigobar", config)
     match op:
         case 1:
-            no_implementado()
+            consumos.registrar_consumos(
+                tablas_del_sistema.cargar_data("data/reservas.json")
+            )
+            volver_al_menu()
         case 2:
-            no_implementado()
+            consumos.anular_consumos(
+                tablas_del_sistema.cargar_data("data/reservas.json")
+            )
+            volver_al_menu()
         case 0:
             menu_principal()
     return None
