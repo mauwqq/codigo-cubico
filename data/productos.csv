@@ -1,6 +1,6 @@
-ID,NOMBRE,PRECIO_U
-00,"Agua 500ml",3
-01,"Coca Cola 500ml",5
-02,"Sprite 500ml",5
-11,"Papas Fritas",3
-12,"Alfajor",1
+COD,NOMBRE,PRECIO_U
+0,"Agua 500ml",3
+1,"Coca Cola 500ml",5
+2,"Sprite 500ml",5
+3,"Papas Fritas",3
+4,"Alfajor",1
