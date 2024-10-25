@@ -2,7 +2,7 @@
     {
         "ID": "1",
         "nombre": "Juan",
-        "apellido": "P\u00e9rez",
+        "apellido": "Pérez",
         "DNI": "12345679",
         "calle": "Av. de Mayo",
         "numero": "123",
@@ -13,20 +13,12 @@
         "habitacion": "101",
         "fecha reserva": "2024/09/21",
         "inicio estadia": "2024/09/24",
-        "fin estadia": "2024/09/27",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/09/27"
     },
     {
         "ID": "2",
-        "nombre": "Mar\u00eda",
-        "apellido": "Gonz\u00e1lez",
+        "nombre": "María",
+        "apellido": "González",
         "DNI": "23456780",
         "calle": "Calle Corrientes",
         "numero": "456",
@@ -37,20 +29,12 @@
         "habitacion": "102",
         "fecha reserva": "2024/09/22",
         "inicio estadia": "2024/09/26",
-        "fin estadia": "2024/09/29",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/09/29"
     },
     {
         "ID": "3",
         "nombre": "Carlos",
-        "apellido": "Fern\u00e1ndez",
+        "apellido": "Fernández",
         "DNI": "34567891",
         "calle": "Av. Libertador",
         "numero": "789",
@@ -61,19 +45,11 @@
         "habitacion": "103",
         "fecha reserva": "2024/09/23",
         "inicio estadia": "2024/09/27",
-        "fin estadia": "2024/09/30",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/09/30"
     },
     {
         "ID": "4",
-        "nombre": "Luc\u00eda",
+        "nombre": "Lucía",
         "apellido": "Lopez",
         "DNI": "45678912",
         "calle": "Calle Florida",
@@ -85,20 +61,12 @@
         "habitacion": "104",
         "fecha reserva": "2024/09/24",
         "inicio estadia": "2024/09/28",
-        "fin estadia": "2024/10/01",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/01"
     },
     {
         "ID": "5",
-        "nombre": "Sof\u00eda",
-        "apellido": "Mart\u00ednez",
+        "nombre": "Sofía",
+        "apellido": "Martínez",
         "DNI": "56789013",
         "calle": "Av. Rivadavia",
         "numero": "654",
@@ -109,22 +77,14 @@
         "habitacion": "105",
         "fecha reserva": "2024/09/25",
         "inicio estadia": "2024/10/01",
-        "fin estadia": "2024/10/04",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/04"
     },
     {
         "ID": "6",
         "nombre": "Mateo",
-        "apellido": "Su\u00e1rez",
+        "apellido": "Suárez",
         "DNI": "67890124",
-        "calle": "Calle San Mart\u00edn",
+        "calle": "Calle San Martín",
         "numero": "987",
         "piso": "6",
         "dpto": "F",
@@ -133,63 +93,39 @@
         "habitacion": "106",
         "fecha reserva": "2024/09/26",
         "inicio estadia": "2024/10/02",
-        "fin estadia": "2024/10/05",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/05"
     },
     {
         "ID": "7",
         "nombre": "Valentina",
-        "apellido": "D\u00edaz",
+        "apellido": "Díaz",
         "DNI": "78901235",
         "calle": "Av. Santa Fe",
         "numero": "852",
         "piso": "7",
         "dpto": "G",
-        "localidad": "C\u00f3rdoba",
-        "provincia": "C\u00f3rdoba",
+        "localidad": "Córdoba",
+        "provincia": "Córdoba",
         "habitacion": "107",
         "fecha reserva": "2024/09/27",
         "inicio estadia": "2024/10/03",
-        "fin estadia": "2024/10/06",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/06"
     },
     {
         "ID": "8",
-        "nombre": "Agust\u00edn",
-        "apellido": "Ram\u00edrez",
+        "nombre": "Agustín",
+        "apellido": "Ramírez",
         "DNI": "89012346",
         "calle": "Calle Belgrano",
         "numero": "369",
         "piso": "8",
         "dpto": "H",
-        "localidad": "Tucum\u00e1n",
-        "provincia": "Tucum\u00e1n",
+        "localidad": "Tucumán",
+        "provincia": "Tucumán",
         "habitacion": "108",
         "fecha reserva": "2024/09/28",
         "inicio estadia": "2024/10/04",
-        "fin estadia": "2024/10/07",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/07"
     },
     {
         "ID": "9",
@@ -200,22 +136,12 @@
         "numero": "741",
         "piso": "9",
         "dpto": "I",
-        "localidad": "Bah\u00eda Blanca",
+        "localidad": "Bahía Blanca",
         "provincia": "Buenos Aires",
         "habitacion": "109",
         "fecha reserva": "2024/09/29",
         "inicio estadia": "2024/10/05",
-        "fin estadia": "2024/10/08",
-        "estado": "desocupada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ],
-        "importe_pagado": 1000.0,
-        "medio_de_pago": 1
+        "fin estadia": "2024/10/08"
     },
     {
         "ID": "10",
@@ -231,14 +157,6 @@
         "habitacion": "110",
         "fecha reserva": "2024/09/30",
         "inicio estadia": "2024/10/06",
-        "fin estadia": "2024/10/09",
-        "estado": "reservada",
-        "consumos": [
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+        "fin estadia": "2024/10/09"
     }
 ]

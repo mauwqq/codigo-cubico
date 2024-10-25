@@ -9,8 +9,15 @@ from modulos import facturacion
 
 
 def clear() -> None:
-    """Limpia la consola (pantalla) del terminal."""
+    """Limpia la consola (pantalla) del terminal.
+
+    Pre: No recibe nada.
+
+    Post: Devuelve None.
+
+    """
     os.system("cls" if os.name == "nt" else "clear")
+    return None
 
 
 def pedir_numero(opciones: Dict[str, str]) -> int:
@@ -27,10 +34,11 @@ def pedir_numero(opciones: Dict[str, str]) -> int:
         try:
             n = int(input("Seleccione una opción: "))
             if str(n) in opciones:
-                return n
+                break
             print("El número ingresado no corresponde a ninguna opción.")
         except ValueError:
             print("Debe ingresar un número.")
+    return n
 
 
 def mostrar_menu_y_pedir_numero(
@@ -54,17 +62,37 @@ def mostrar_menu_y_pedir_numero(
     return op
 
 
+def volver_al_menu() -> None:
+    """Imprime un mensaje y devuelve al usuario al menu principal cuando este lo necesite.
+
+    Pre: No recibe nada.
+
+    Post: Devuelve None.
+
+    """
+    input("Presione 'Enter' para volver al menu.")
+    menu_principal()
+    return None
+
+
 def no_implementado() -> None:
-    """Informa al usuario que una opción no está implementada."""
-    print("Esta opción no está implementada aún.")
-    print("Regresando al menú...")
+    """Informa al usuario que una opción no está implementada.
+
+    Pre: No recibe nada.
+
+    Post: Devuelve None.
+
+    """
+    print("Esta opción no está implementada aún.\nRegresando al menú...")
     time.sleep(2)
     menu_principal()
-    return
+    return None
 
 
 def menu_principal() -> None:
     """Muestra el menú principal y ejecuta la opción seleccionada.
+
+    Pre: No recibe nada.
 
     Post: Muestra el menú principal y llama a la función correspondiente según la
           opción seleccionada por el usuario.
@@ -124,26 +152,22 @@ def menu_reservas(config: Dict[str, Dict[str, str]]) -> None:
     match op:
         case 1:
             reservas.registrar_reserva(config)
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 2:
-            reservas.consultar_reserva(config)
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            reservas.datos_reserva()
+            volver_al_menu()
         case 3:
             reservas.anular_reserva(config)
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 4:
             reservas.registrar_check_in(config)
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 5:
             reservas.registrar_check_out(config)
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 0:
             menu_principal()
+    return None
 
 
 def menu_consumo_frigobar(config: Dict[str, Dict[str, str]]) -> None:
@@ -163,6 +187,7 @@ def menu_consumo_frigobar(config: Dict[str, Dict[str, str]]) -> None:
             no_implementado()
         case 0:
             menu_principal()
+    return None
 
 
 def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
@@ -180,18 +205,17 @@ def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
             facturacion.emitir_factura(
                 tablas_del_sistema.cargar_data("data/reservas.json")
             )
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 2:
             facturacion.emitir_nota_de_credito(
                 tablas_del_sistema.cargar_data("data/reservas.json")
             )
-            if input("Presione 'Enter' para volver al menu.") == "":
-                menu_principal()
+            volver_al_menu()
         case 3:
             no_implementado()
         case 0:
             menu_principal()
+    return None
 
 
 def menu_tablas_del_sistema(config: Dict[str, Dict[str, str]]) -> None:
@@ -207,22 +231,20 @@ def menu_tablas_del_sistema(config: Dict[str, Dict[str, str]]) -> None:
     match op:
         case 1:
             tablas_del_sistema.imprimir_tabla("data/clientes.csv")
-            if input("Presione 'Enter' para volver.") == "":
-                menu_principal()
+            volver_al_menu()
         case 2:
             tablas_del_sistema.imprimir_tabla("data/habitaciones.csv")
-            if input("Presione 'Enter' para volver.") == "":
-                menu_principal()
+            volver_al_menu()
         case 3:
             tablas_del_sistema.imprimir_tabla("data/productos.csv")
-            if input("Presione 'Enter' para volver.") == "":
-                menu_principal()
+            volver_al_menu()
         case 4:
             no_implementado()
         case 5:
             no_implementado()
         case 0:
             menu_principal()
+    return None
 
 
 if __name__ == "__main__":
