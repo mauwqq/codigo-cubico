@@ -34,11 +34,14 @@ def pedir_numero(opciones: Dict[str, str]) -> int:
     while True:
         try:
             n = int(input("Seleccione una opción: "))
+        except ValueError:
+            print("Debe ingresar un número.")
+        except Exception as e:
+            print(e)
+        else:
             if str(n) in opciones:
                 break
             print("El número ingresado no corresponde a ninguna opción.")
-        except ValueError:
-            print("Debe ingresar un número.")
     return n
 
 
