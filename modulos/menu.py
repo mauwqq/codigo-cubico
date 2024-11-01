@@ -33,16 +33,16 @@ def pedir_numero(opciones: Dict[str, str]) -> int:
     """
     while True:
         try:
-            n = int(input("Seleccione una opción: "))
-        except ValueError:
-            print("Debe ingresar un número.")
-        except Exception as e:
+            n = input("Seleccione una opción: ")
+            if not n.isdigit():
+                raise ValueError("Debe ingresar un numero.")
+        except ValueError as e:
             print(e)
         else:
-            if str(n) in opciones:
+            if n in opciones:
                 break
             print("El número ingresado no corresponde a ninguna opción.")
-    return n
+    return int(n)
 
 
 def mostrar_menu_y_pedir_numero(
@@ -60,8 +60,10 @@ def mostrar_menu_y_pedir_numero(
     """
     clear()
     opciones = config[nombre_menu]
+    print("=" * 27)
     for clave, valor in opciones.items():
         print(f"{clave}- {valor}.")
+    print("=" * 27)
     op = pedir_numero(opciones)
     return op
 
@@ -221,8 +223,6 @@ def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
                 tablas_del_sistema.cargar_data("data/reservas.json")
             )
             volver_al_menu()
-        case 3:
-            no_implementado()
         case 0:
             menu_principal()
     return None
@@ -249,9 +249,8 @@ def menu_tablas_del_sistema(config: Dict[str, Dict[str, str]]) -> None:
             tablas_del_sistema.imprimir_tabla("data/productos.csv")
             volver_al_menu()
         case 4:
-            no_implementado()
-        case 5:
-            no_implementado()
+            tablas_del_sistema.medios_de_pago()
+            volver_al_menu()
         case 0:
             menu_principal()
     return None

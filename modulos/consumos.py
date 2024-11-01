@@ -3,6 +3,21 @@ from modulos import reservas
 from modulos import tablas_del_sistema
 
 
+def pedir_cod_producto(consumos: List[int]) -> int:
+    """"""
+    while True:
+        try:
+            cod = input("Ingrese el código del producto: ")
+            if not cod.isdigit():
+                raise ValueError("Debe ingresar un numero.")
+            if cod not in tuple(str(i) for i in range(len(consumos))):
+                raise ValueError("Ingrese un número de producto válido.")
+            break
+        except ValueError as e:
+            print(e)
+    return cod
+
+
 def registrar_consumos(listado_reservas: List[Dict]) -> None:
     """Busca una reserva por su ID. Si el estado es "ocupada" pide que indique el producto
     y la cantidad consumida. Agrega los consumos a la reserva.
@@ -32,33 +47,20 @@ def registrar_consumos(listado_reservas: List[Dict]) -> None:
         nombre_producto = producto.get("NOMBRE", "Desconocido")
         print(f"Código: {id_producto} | Descripción: {nombre_producto}")
     consumos = reserva_encontrada.get("consumos", [0] * 5)
+    codigo_producto = pedir_cod_producto(consumos)
     while True:
         try:
-            codigo_producto = int(input("Ingrese el código del producto a registrar: "))
-            if codigo_producto not in [0, 1, 2, 3, 4]:
-                raise ValueError("Ingrese un número de producto válido.")
-            break
-        except ValueError as e:
-            if "invalid literal for int() with base 10" in str(e):
-                print("Debe ingresar un número válido.")
-            else:
-                print(e)
-    while True:
-        try:
-            cantidad_consumida = int(
-                input(f"Ingrese la cantidad consumida del producto {codigo_producto}: ")
+            cantidad_consumida = input(
+                f"Ingrese la cantidad consumida del producto {codigo_producto}: "
             )
-            if cantidad_consumida <= 0:
-                raise ValueError("La cantidad debe ser un número positivo.")
+            if not cantidad_consumida.isdigit():
+                raise ValueError("Debe ingresar un numero.")
             break
         except ValueError as e:
-            if "invalid literal for int() with base 10" in str(e):
-                print("Debe ingresar un número válido.")
-            else:
-                print(e)
-    consumos[codigo_producto] += cantidad_consumida
+            print(e)
+    consumos[int(codigo_producto)] += int(cantidad_consumida)
     print(
-        f"Se registró el consumo de {cantidad_consumida} unidades del producto {codigo_producto} "
+        f"Se registró el consumo de {cantidad_consumida} unidades del producto {codigo_producto}"
     )
     reserva_encontrada["consumos"] = consumos
     tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
@@ -84,41 +86,29 @@ def anular_consumos(listado_reservas: List[Dict]) -> None:
         print(f"La reserva N° {id_} no se encuentra ocupada actualmente.")
         return None
     for producto in listado_productos:
-        id_producto = producto.get("COD", 0)
+        id_producto = producto.get("ID", 0)
         nombre_producto = producto.get("NOMBRE", "Desconocido")
         print(f"Código: {id_producto} | Descripción: {nombre_producto}")
     consumos = reserva_encontrada.get("consumos", [])
+    codigo_producto = pedir_cod_producto(consumos)
     while True:
         try:
-            codigo_producto = int(input("Ingrese el código del producto a anular: "))
-            if codigo_producto not in [0, 1, 2, 3, 4]:
-                raise ValueError("Ingrese un codigo de producto válido.")
-            break
-        except ValueError as e:
-            if "invalid literal for int() with base 10" in str(e):
-                print("Debe ingresar un número válido.")
-            else:
-                print(e)
-    while True:
-        try:
-            cantidad_anulada = int(
-                input(f"Ingrese la cantidad a anular del producto {codigo_producto}: ")
+            cantidad_anulada = input(
+                f"Ingrese la cantidad a anular del producto {codigo_producto}: "
             )
-            if cantidad_anulada <= 0:
-                raise ValueError("La cantidad debe ser un número positivo.")
-            if cantidad_anulada > consumos[codigo_producto]:
+            if not cantidad_anulada.isdigit():
+                raise ValueError("Debe ingresar un numero.")
+            if int(cantidad_anulada) > consumos[int(codigo_producto)]:
                 raise ValueError(
                     f"No se puede anular más de lo consumido. Consumo actual: {consumos[codigo_producto]}"
                 )
             break
         except ValueError as e:
-            if "invalid literal for int() with base 10" in str(e):
-                print("Debe ingresar un número válido.")
-            else:
-                print(e)
-    consumos[codigo_producto] -= cantidad_anulada
+            print(e)
+    consumos[int(codigo_producto)] -= int(cantidad_anulada)
     print(
         f"Se registró la anulación de {cantidad_anulada} unidades del producto {codigo_producto}."
     )
     reserva_encontrada["consumos"] = consumos
     tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
+    return None

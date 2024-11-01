@@ -13,15 +13,17 @@ def pedir_num(msj: str, tipo):
     """
     while True:
         try:
-            n = tipo(input(msj))
+            n = input(msj).strip()
+            if tipo == int and not n.isdigit():
+                raise ValueError("Ingrese un numero valido.")
+            n = tipo(n)
             if n > 0:
                 break
             raise ValueError("El valor ingresado debe ser positivo.")
+        except TypeError:
+            print("Error: No se pudo convertir el dato. Verifique el tipo.")
         except ValueError as e:
-            if "could not convert" in str(e):
-                print("Ingrese un número válido.")
-            else:
-                print(e)
+            print(e)
     return n
 
 
@@ -58,14 +60,14 @@ def discriminar_iva() -> bool:
                 "Indique la condición frente al IVA (1-Monotributo o RI, 2-Consumidor final): ",
                 int,
             )
-            if condicion_iva not in [1, 2]:
+            if condicion_iva not in (1, 2):
                 raise ValueError(
                     "Ingrese 1 para monotributo o RI y 2 para consumidor final."
                 )
-            discriminar = bool(condicion_iva == 1)
-            return discriminar
-        except ValueError as mensaje:
-            print(mensaje)
+            break
+        except ValueError as e:
+            print(e)
+    return bool(condicion_iva == 1)
 
 
 def emitir_factura(listado_reservas: List[Dict]) -> None:

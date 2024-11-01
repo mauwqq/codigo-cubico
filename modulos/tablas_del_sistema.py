@@ -4,7 +4,7 @@ from typing import List, Dict
 from tabulate import tabulate
 
 
-def cargar_data(ruta_archivo: str) -> List[Dict]:
+def cargar_data(ruta: str) -> List[Dict]:
     """Carga datos desde un archivo JSON o CSV.
 
     Pre: Recibe una cadena "ruta_archivo" que representa la ruta de un archivo
@@ -14,29 +14,43 @@ def cargar_data(ruta_archivo: str) -> List[Dict]:
           un error, devuelve una lista vacía.
 
     """
-    match ruta_archivo.split(".")[1]:
+    match ruta.split(".")[1]:
         case "json":
             try:
-                with open(ruta_archivo, encoding="utf-8") as archivo:
+                with open(ruta, encoding="utf-8") as archivo:
                     return json.load(archivo)
             except json.JSONDecodeError:
                 return []
             except FileNotFoundError:
-                print(f"Error: no se encontro: {ruta_archivo}.")
+                print(f"No se encontro el archivo {ruta}")
+                return []
+            except IsADirectoryError:
+                print("La ruta suministrada es un directorio.")
+                return []
+            except Exception as e:
+                print(f"Error al guardar los datos en JSON: {e}")
                 return []
         case "csv":
             try:
-                with open(ruta_archivo, mode='r', encoding='utf-8') as archivo:
+                with open(ruta, mode="r", encoding="utf-8") as archivo:
                     lineas = archivo.readlines()
-                headers = lineas[0].strip().split(',')
+                headers = lineas[0].strip().split(",")
                 data = []
                 for linea in lineas[1:]:
-                    valores = linea.strip().split(',')
-                    elementos = {headers[i]: valores[i].strip('"') for i in range(len(headers))}
+                    valores = linea.strip().split(",")
+                    elementos = {
+                        headers[i]: valores[i].strip('"') for i in range(len(headers))
+                    }
                     data.append(elementos)
                 return data
+            except ValueError as e:
+                print(e)
             except FileNotFoundError:
-                print(f"No se encontro: {ruta_archivo}")
+                print(f"No se encontro el archivo {ruta}")
+            except IsADirectoryError:
+                print("La ruta suministrada es un directorio.")
+            except Exception as e:
+                print(f"Error al guardar los datos en CSV: {e}")
         case _:
             print("La extension del archivo es desconocida.")
 
@@ -74,8 +88,16 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
         case "json":
             try:
                 with open(ruta, "w", encoding="utf-8") as archivo:
-                    json.dump(data, archivo, indent=4)
+                    json.dump(data, archivo, indent=4, ensure_ascii=False)
                 print("Datos guardados exitosamente.")
+            except FileNotFoundError:
+                print(f"No se encontro el archivo {ruta}")
+            except IsADirectoryError:
+                print("La ruta suministrada es un directorio.")
+            except json.JSONDecodeError:
+                print(f"El archivo {ruta} no es un JSON valido.")
+            except IsADirectoryError:
+                print("La ruta suministrada es un directorio.")
             except Exception as e:
                 print(f"Error al guardar los datos en JSON: {e}")
         case "csv":
@@ -92,10 +114,31 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                             ",".join(f'"{linea[header]}"' for header in headers) + "\n"
                         )
                 print("Datos guardados exitosamente.")
+            except ValueError as e:
+                print(e)
+            except FileNotFoundError:
+                print(f"No se encontro el archivo {ruta}")
+            except IsADirectoryError:
+                print("La ruta suministrada es un directorio.")
             except Exception as e:
                 print(f"Error al guardar los datos en CSV: {e}")
         case _:
             print(
                 f"Extensión de archivo desconocida: {extension}. No se guardaron datos."
             )
+    return None
+
+
+def medios_de_pago() -> None:
+    """Imprime los medios de pago aceptados por el sistema.
+
+    Pre: No recibe nada.
+
+    Post: Retorna None.
+
+    """
+    medios = "Efectivo - Transferencia - Tarjeta de débito - Tarjetas de crédito - Cuenta DNI - Modo"
+    print("=" * len(medios))
+    print(medios)
+    print("=" * len(medios))
     return None
