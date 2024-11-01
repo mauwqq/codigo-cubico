@@ -21,11 +21,8 @@ def cargar_data(ruta: str) -> List[Dict]:
                     return json.load(archivo)
             except json.JSONDecodeError:
                 return []
-            except FileNotFoundError:
+            except (FileNotFoundError, IsADirectoryError):
                 print(f"No se encontro el archivo {ruta}")
-                return []
-            except IsADirectoryError:
-                print("La ruta suministrada es un directorio.")
                 return []
             except Exception as e:
                 print(f"Error al guardar los datos en JSON: {e}")
@@ -45,10 +42,8 @@ def cargar_data(ruta: str) -> List[Dict]:
                 return data
             except ValueError as e:
                 print(e)
-            except FileNotFoundError:
+            except (FileNotFoundError, IsADirectoryError):
                 print(f"No se encontro el archivo {ruta}")
-            except IsADirectoryError:
-                print("La ruta suministrada es un directorio.")
             except Exception as e:
                 print(f"Error al guardar los datos en CSV: {e}")
         case _:
@@ -90,14 +85,10 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                 with open(ruta, "w", encoding="utf-8") as archivo:
                     json.dump(data, archivo, indent=4, ensure_ascii=False)
                 print("Datos guardados exitosamente.")
-            except FileNotFoundError:
+            except (FileNotFoundError, IsADirectoryError):
                 print(f"No se encontro el archivo {ruta}")
-            except IsADirectoryError:
-                print("La ruta suministrada es un directorio.")
             except json.JSONDecodeError:
                 print(f"El archivo {ruta} no es un JSON valido.")
-            except IsADirectoryError:
-                print("La ruta suministrada es un directorio.")
             except Exception as e:
                 print(f"Error al guardar los datos en JSON: {e}")
         case "csv":
@@ -116,10 +107,8 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                 print("Datos guardados exitosamente.")
             except ValueError as e:
                 print(e)
-            except FileNotFoundError:
+            except (FileNotFoundError, IsADirectoryError):
                 print(f"No se encontro el archivo {ruta}")
-            except IsADirectoryError:
-                print("La ruta suministrada es un directorio.")
             except Exception as e:
                 print(f"Error al guardar los datos en CSV: {e}")
         case _:
