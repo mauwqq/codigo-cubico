@@ -8,7 +8,7 @@
 - Visualizar reservas
 
 #### Haciendo
-*(Actualmente no hay tareas en proceso)*
+* Interfaz web para visualizar habitaciones disponibles y reservadas/ocupadas. 
 
 #### Hechas
 - Registrar reservas
