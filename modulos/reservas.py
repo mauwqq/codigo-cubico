@@ -1,8 +1,9 @@
 from typing import Tuple, Callable, Dict, List
 import re
 from datetime import datetime
-from modulos import tablas_del_sistema
 from tabulate import tabulate
+from modulos import tablas_del_sistema
+
 
 meses = {
     1: 31,
@@ -221,6 +222,8 @@ def solicitar_datos_domicilio() -> Dict[str, str]:
         "Piso",
         "Departamento",
     ]
+    # Estructura generada
+    # {'Provincia': '', 'Localidad': '', 'Calle': '', 'Altura': '0', 'Piso': '0', 'Departamento': '0'}
     return {
         campo: solicitar_input(
             lambda x: validar_campo(campo, x),
@@ -273,7 +276,7 @@ def verificar_fecha_valida(dia: int, mes: int, anio: int) -> bool:
           considerando el número de días de cada mes y los años bisiestos.
 
     """
-    if (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0):
+    if (not (anio % 4) and (anio % 100 != 0)) or not (anio % 400):
         meses.update({2: 29})
     return (mes in meses) and (dia <= meses.get(mes))
 
@@ -351,6 +354,8 @@ def habitacion_desocupada(n: int) -> bool:
 
     """
     reservas = tablas_del_sistema.cargar_data("data/reservas.json")
+    if not reservas:
+        return True
     reservas_habitacion = [
         reserva for reserva in reservas if reserva["habitacion"] == str(n)
     ]
@@ -375,6 +380,8 @@ def habitacion() -> int:
 
     """
     habitaciones = tablas_del_sistema.cargar_data("data/habitaciones.csv")
+    if not habitaciones:
+        return 0
     while True:
         try:
             n_habitacion = solicitar_input(
@@ -400,10 +407,14 @@ def registrar_reserva(reservas: List[Dict]) -> None:
     Post: Añade la reserva y la carga a el json con cargar_data(), devuelve None.
 
     """
+    if not reservas:
+        return None
     nombre, apellido, dni, calle, altura, piso, dpto, localidad, provincia = (
         solicitar_datos_cliente()
     )
     n_habitacion = habitacion()
+    if not n_habitacion:
+        return None
     fecha_reserva = str(datetime.now().date()).replace("-", "/")
     while True:
         try:
@@ -418,6 +429,7 @@ def registrar_reserva(reservas: List[Dict]) -> None:
             )
         except ValueError as e:
             print(e)
+    listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
     reserva = {
         "ID": str(len(reservas) + 1),
         "nombre": nombre,
@@ -434,7 +446,7 @@ def registrar_reserva(reservas: List[Dict]) -> None:
         "fecha_inicio": "/".join(fecha_i),
         "fecha_fin": "/".join(fecha_f),
         "estado": "reservada",
-        "consumos": [0, 0, 0, 0, 0],
+        "consumos": [0 for producto in listado_productos] if listado_productos else [0],
     }
     reservas.append(reserva)
     tablas_del_sistema.guardar_data(reservas, "data/reservas.json")
@@ -474,6 +486,8 @@ def datos_reserva() -> None:
 
     """
     reservas = tablas_del_sistema.cargar_data("data/reservas.json")
+    if not reservas:
+        return None
     id_ = consultar_reserva(reservas)
     if not id_:
         print("No se ingresó un ID válido.")

@@ -1,15 +1,10 @@
 {
     "menu_principal": {
-        "1": "Tablero",
-        "2": "Reservas",
-        "3": "Consumos del frigobar",
-        "4": "Facturación",
-        "5": "Tablas del sistema",
+        "1": "Reservas",
+        "2": "Consumos del frigobar",
+        "3": "Facturación",
+        "4": "Tablas del sistema",
         "0": "Salir del sistema"
-    },
-    "menu_tablero": {
-        "1": "Visualizar reservas",
-        "0": "Menú principal"
     },
     "menu_reservas": {
         "1": "Registrar reserva",

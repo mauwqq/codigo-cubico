@@ -17,7 +17,7 @@ def cargar_data(ruta: str) -> List[Dict]:
     match ruta.split(".")[1]:
         case "json":
             try:
-                with open(ruta, encoding="utf-8") as archivo:
+                with open(ruta, 'rt', encoding="utf-8") as archivo:
                     return json.load(archivo)
             except json.JSONDecodeError:
                 return []
@@ -25,7 +25,7 @@ def cargar_data(ruta: str) -> List[Dict]:
                 print(f"No se encontro el archivo {ruta}")
                 return []
             except Exception as e:
-                print(f"Error al guardar los datos en JSON: {e}")
+                print(f"Error al cargar los datos en JSON: {e}")
                 return []
         case "csv":
             try:
@@ -42,12 +42,16 @@ def cargar_data(ruta: str) -> List[Dict]:
                 return data
             except ValueError as e:
                 print(e)
+                return []
             except (FileNotFoundError, IsADirectoryError):
                 print(f"No se encontro el archivo {ruta}")
+                return []
             except Exception as e:
-                print(f"Error al guardar los datos en CSV: {e}")
+                print(f"Error al cargar los datos en CSV: {e}")
+                return []
         case _:
             print("La extension del archivo es desconocida.")
+            return []
 
 
 def imprimir_tabla(ruta_archivo: str) -> None:

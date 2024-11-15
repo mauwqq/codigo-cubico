@@ -4,7 +4,15 @@ from modulos import tablas_del_sistema
 
 
 def pedir_cod_producto(consumos: List[int]) -> int:
-    """"""
+    """Pide al usuario el codigo del producto, verifica que sea correcto y lo devuelve.
+
+    Pre: consumos es una lista de enteros.
+
+    Post: Devuelve un numero entero.
+
+    Raises: ValueError: Si no se ingreso un numero entero o no se encontro el producto.
+
+    """
     while True:
         try:
             cod = input("Ingrese el código del producto: ")
@@ -28,14 +36,19 @@ def registrar_consumos(listado_reservas: List[Dict]) -> None:
     Post: no tiene un return sino que muestra en pantalla lo que se consumió y agrega
     el listado de consumos a la reserva o lo modifica si ya existe.
 
+    Raises: ValueError: si la cantidad consumida del producto no es un numero entero.
+
     """
     id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
     )
-    if id_ == 0:
+    if not id_:
         print("No se encontro la reserva.")
         return None
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+    if not listado_productos:
+        return None
+
     reserva_encontrada = list(
         reserva for reserva in listado_reservas if reserva["ID"] == str(id_)
     )[0]
@@ -71,14 +84,24 @@ def anular_consumos(listado_reservas: List[Dict]) -> None:
     """
     Busca una reserva por su ID. Si el estado es "ocupada" pide que indique el producto
     y la cantidad a anular. Modifica la cantidad consumida en la reserva.
+
+    Pre: listado_reservas es una lista de diccionarios.
+
+    Post: No devuelve nada.
+
+    Raises: ValueError: si la cantidad a anular del producto no es un numero entero.
+
     """
     id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
     )
-    if id_ == 0:
+    if not id_:
         print("No se encontró la reserva.")
         return None
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+    if not listado_productos:
+        return None
+
     reserva_encontrada = list(
         reserva for reserva in listado_reservas if reserva["ID"] == str(id_)
     )[0]

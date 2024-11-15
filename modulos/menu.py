@@ -1,5 +1,3 @@
-"""Modulo para imprimir el menu del gestor."""
-
 from typing import Dict
 import os
 import time
@@ -7,6 +5,13 @@ from modulos import tablas_del_sistema
 from modulos import reservas
 from modulos import facturacion
 from modulos import consumos
+
+
+RUTA_RESERVAS = "data/reservas.json"
+RUTA_MENU = "data/menu.json"
+RUTA_CLIENTES = "data/clientes.csv"
+RUTA_HABITACIONES = "data/habitaciones.csv"
+RUTA_PRODUCTOS = "data/productos.csv"
 
 
 def clear() -> None:
@@ -29,6 +34,8 @@ def pedir_numero(opciones: Dict[str, str]) -> int:
 
     Post: Devuelve un número entero correspondiente a una opción válida
           seleccionada por el usuario.
+
+    Raises: ValueError: si no se ingresa un numero entero.
 
     """
     while True:
@@ -104,42 +111,21 @@ def menu_principal() -> None:
           opción seleccionada por el usuario.
 
     """
-    config = tablas_del_sistema.cargar_data("data/menu.json")
-    op = mostrar_menu_y_pedir_numero("menu_principal", config)
+    data = tablas_del_sistema.cargar_data(RUTA_MENU)
+    op = mostrar_menu_y_pedir_numero("menu_principal", data)
     match op:
         case 1:
-            menu_tablero(config)
+            menu_reservas(data)
         case 2:
-            menu_reservas(config)
+            menu_consumo_frigobar(data)
         case 3:
-            menu_consumo_frigobar(config)
+            menu_facturacion(data)
         case 4:
-            menu_facturacion(config)
-        case 5:
-            menu_tablas_del_sistema(config)
+            menu_tablas_del_sistema(data)
         case 0:
             print("Saliendo...")
         case _:
             print("Opción inválida. Regresando al menú principal.")
-            menu_principal()
-    return None
-
-
-def menu_tablero(config: Dict[str, Dict[str, str]]) -> None:
-    """Muestra el menú del tablero y ejecuta la opción seleccionada.
-
-    Pre: "config" es un diccionario que contiene en un diccionario el menú del
-         tablero.
-
-    Post: Muestra el menú del tablero y llama a la función correspondiente según
-          la opción seleccionada por el usuario.
-
-    """
-    op = mostrar_menu_y_pedir_numero("menu_tablero", config)
-    match op:
-        case 1:
-            no_implementado()
-        case 0:
             menu_principal()
     return None
 
@@ -154,22 +140,22 @@ def menu_reservas(config: Dict[str, Dict[str, str]]) -> None:
 
     """
     op = mostrar_menu_y_pedir_numero("menu_reservas", config)
-    config = tablas_del_sistema.cargar_data("data/reservas.json")
+    data = tablas_del_sistema.cargar_data(RUTA_RESERVAS)
     match op:
         case 1:
-            reservas.registrar_reserva(config)
+            reservas.registrar_reserva(data)
             volver_al_menu()
         case 2:
             reservas.datos_reserva()
             volver_al_menu()
         case 3:
-            reservas.anular_reserva(config)
+            reservas.anular_reserva(data)
             volver_al_menu()
         case 4:
-            reservas.registrar_check_in(config)
+            reservas.registrar_check_in(data)
             volver_al_menu()
         case 5:
-            reservas.registrar_check_out(config)
+            reservas.registrar_check_out(data)
             volver_al_menu()
         case 0:
             menu_principal()
@@ -188,14 +174,10 @@ def menu_consumo_frigobar(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_consumo_frigobar", config)
     match op:
         case 1:
-            consumos.registrar_consumos(
-                tablas_del_sistema.cargar_data("data/reservas.json")
-            )
+            consumos.registrar_consumos(tablas_del_sistema.cargar_data(RUTA_RESERVAS))
             volver_al_menu()
         case 2:
-            consumos.anular_consumos(
-                tablas_del_sistema.cargar_data("data/reservas.json")
-            )
+            consumos.anular_consumos(tablas_del_sistema.cargar_data(RUTA_RESERVAS))
             volver_al_menu()
         case 0:
             menu_principal()
@@ -214,13 +196,11 @@ def menu_facturacion(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_facturacion", config)
     match op:
         case 1:
-            facturacion.emitir_factura(
-                tablas_del_sistema.cargar_data("data/reservas.json")
-            )
+            facturacion.emitir_factura(tablas_del_sistema.cargar_data(RUTA_RESERVAS))
             volver_al_menu()
         case 2:
             facturacion.emitir_nota_de_credito(
-                tablas_del_sistema.cargar_data("data/reservas.json")
+                tablas_del_sistema.cargar_data(RUTA_RESERVAS)
             )
             volver_al_menu()
         case 0:
@@ -240,13 +220,13 @@ def menu_tablas_del_sistema(config: Dict[str, Dict[str, str]]) -> None:
     op = mostrar_menu_y_pedir_numero("menu_tablas_del_sistema", config)
     match op:
         case 1:
-            tablas_del_sistema.imprimir_tabla("data/clientes.csv")
+            tablas_del_sistema.imprimir_tabla(RUTA_CLIENTES)
             volver_al_menu()
         case 2:
-            tablas_del_sistema.imprimir_tabla("data/habitaciones.csv")
+            tablas_del_sistema.imprimir_tabla(RUTA_HABITACIONES)
             volver_al_menu()
         case 3:
-            tablas_del_sistema.imprimir_tabla("data/productos.csv")
+            tablas_del_sistema.imprimir_tabla(RUTA_PRODUCTOS)
             volver_al_menu()
         case 4:
             tablas_del_sistema.medios_de_pago()

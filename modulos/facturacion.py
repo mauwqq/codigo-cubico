@@ -2,6 +2,7 @@ from typing import List, Dict
 from modulos import reservas
 from modulos import tablas_del_sistema
 
+
 def pedir_num(msj: str, tipo):
     """Pide un numero y lo devuelve.
 
@@ -10,14 +11,18 @@ def pedir_num(msj: str, tipo):
 
     Post: Devuelve el numero ingresado si no es negativo.
 
+    Raises: TypeError: si el dato ingresado no se puede castear al tipo pedido al
+            llamar la funcion.
+            ValueError: si el valor ingresado no es un numero, o no es un numero
+            positivo.
+
     """
     while True:
         try:
             n = input(msj).strip()
             if tipo == int and not n.isdigit():
                 raise ValueError("Ingrese un numero valido.")
-            n = tipo(n)
-            if n > 0:
+            if tipo(n):
                 break
             raise ValueError("El valor ingresado debe ser positivo.")
         except TypeError:
@@ -53,6 +58,8 @@ def discriminar_iva() -> bool:
 
     Post: Devuelve discriminar, un booleano.
 
+    Raises: ValueError: si el valor ingreado no esta dentro de las opciones.
+
     """
     while True:
         try:
@@ -67,7 +74,7 @@ def discriminar_iva() -> bool:
             break
         except ValueError as e:
             print(e)
-    return bool(condicion_iva == 1)
+    return bool(condicion_iva)
 
 
 def emitir_factura(listado_reservas: List[Dict]) -> None:
@@ -89,11 +96,14 @@ def emitir_factura(listado_reservas: List[Dict]) -> None:
     id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
     )
-    if id_ == 0:
+    if not id_:
         print("No se encontro la reserva.")
         return None
 
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+    if not listado_productos:
+        return None
+
     reserva_encontrada = list(
         reserva for reserva in listado_reservas if reserva["ID"] == str(id_)
     )[0]
@@ -107,7 +117,7 @@ def emitir_factura(listado_reservas: List[Dict]) -> None:
     consumos = reserva_encontrada.get("consumos", [])
     consumo_total = calcular_consumo_total(consumos, listado_productos)
     print(f"El importe ingresado es: {importe_a_facturar}")
-    if sum(consumos) == 0:
+    if not sum(consumos):
         print(f"La reserva {id_} no posee consumos del frigobar.")
     else:
         for i, producto in enumerate(listado_productos):
@@ -162,7 +172,7 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
     id_ = reservas.consultar_reserva(
         tablas_del_sistema.cargar_data("data/reservas.json")
     )
-    if id_ == 0:
+    if not id_:
         print("No se encontro la reserva.")
         return None
 
@@ -177,6 +187,8 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
         print(f"El importe ingresado es: {importe_a_anular}")
         reserva_encontrada["importe_pagado"] = importe_pagado - importe_a_anular
         discriminar_iva()
+    else:
+        print("No se encontro la reserva.")
     return None
 
 
