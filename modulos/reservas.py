@@ -448,8 +448,6 @@ def registrar_reserva(reservas: List[Dict]) -> None:
     Post: Añade la reserva y la carga a el json con cargar_data(), devuelve None.
 
     """
-    if not reservas:
-        return None
     (
         nombre,
         apellido,

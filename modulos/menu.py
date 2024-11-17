@@ -66,6 +66,8 @@ def mostrar_menu_y_pedir_numero(
 
     """
     clear()
+    if not config:
+        return 0
     opciones = config[nombre_menu]
     print("=" * 27)
     for clave, valor in opciones.items():

@@ -1,7 +1,20 @@
-import re
 import json
 from typing import List, Dict
 from tabulate import tabulate
+
+
+def crear_vacio(ruta: str) -> None:
+    """"""
+    match ruta.split(".")[1]:
+        case "json":
+            with open(ruta, "w", encoding="utf-8") as archivo:
+                json.dump([], archivo)
+        case "csv":
+            with open(ruta, "w", encoding="utf-8") as archivo:
+                archivo.write("[]")
+        case _:
+            pass
+    return None
 
 
 def cargar_data(ruta: str) -> List[Dict]:
@@ -17,15 +30,14 @@ def cargar_data(ruta: str) -> List[Dict]:
     match ruta.split(".")[1]:
         case "json":
             try:
-                with open(ruta, 'rt', encoding="utf-8") as archivo:
+                with open(ruta, "rt", encoding="utf-8") as archivo:
                     return json.load(archivo)
             except json.JSONDecodeError:
                 return []
             except (FileNotFoundError, IsADirectoryError):
-                print(f"No se encontro el archivo {ruta}")
+                crear_vacio(ruta)
                 return []
             except Exception as e:
-                print(f"Error al cargar los datos en JSON: {e}")
                 return []
         case "csv":
             try:
@@ -44,13 +56,10 @@ def cargar_data(ruta: str) -> List[Dict]:
                 print(e)
                 return []
             except (FileNotFoundError, IsADirectoryError):
-                print(f"No se encontro el archivo {ruta}")
-                return []
+                crear_vacio(ruta)
             except Exception as e:
-                print(f"Error al cargar los datos en CSV: {e}")
                 return []
         case _:
-            print("La extension del archivo es desconocida.")
             return []
 
 
@@ -65,7 +74,7 @@ def imprimir_tabla(ruta_archivo: str) -> None:
     """
     data = cargar_data(ruta_archivo)
     if not data:
-        print(f"No hay registros en {re.split('[/.]', ruta_archivo)[1]}.")
+        return None
     else:
         print(tabulate(data, headers="keys", tablefmt="rounded_grid"))
     return None
@@ -90,17 +99,13 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                     json.dump(data, archivo, indent=4, ensure_ascii=False)
                 print("Datos guardados exitosamente.")
             except (FileNotFoundError, IsADirectoryError):
-                print(f"No se encontro el archivo {ruta}")
-            except json.JSONDecodeError:
-                print(f"El archivo {ruta} no es un JSON valido.")
-            except Exception as e:
-                print(f"Error al guardar los datos en JSON: {e}")
+                crear_vacio(ruta)
+            except Exception:
+                return None
         case "csv":
             try:
                 if not data:
-                    raise ValueError(
-                        f"No hay datos para guardar en el archivo CSV: {ruta}."
-                    )
+                    return None
                 headers = data[0].keys()
                 with open(ruta, "w", encoding="utf-8") as archivo:
                     archivo.write(",".join(headers) + "\n")
@@ -108,16 +113,12 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                         archivo.write(
                             ",".join(f'"{linea[header]}"' for header in headers) + "\n"
                         )
-            except ValueError as e:
-                print(e)
             except (FileNotFoundError, IsADirectoryError):
-                print(f"No se encontro el archivo {ruta}")
+                crear_vacio(ruta)
             except Exception as e:
-                print(f"Error al guardar los datos en CSV: {e}")
+                return None
         case _:
-            print(
-                f"Extensión de archivo desconocida: {extension}. No se guardaron datos."
-            )
+            return None
     return None
 
 
