@@ -609,7 +609,7 @@ def registrar_check_in(reservas: List[Dict]) -> None:
 
     Pre: reservas es una lista de diccionarios que contiene todas las reservas.
 
-    Post: Actualiza el estado de la reserva a 'check-in' si se encuentra y está reservada.
+    Post: Actualiza el estado de la reserva a 'ocupada' si se encuentra y está reservada.
           Si no se encuentra la reserva, muestra un mensaje informando de ello.
 
     """
@@ -619,7 +619,7 @@ def registrar_check_in(reservas: List[Dict]) -> None:
         return None
     for reserva in reservas:
         if reserva["ID"] == str(id_reserva) and reserva["estado"] == "reservada":
-            reserva["estado"] = "check-in"
+            reserva["estado"] = "ocupada"
             print(f"Check-in realizado con éxito para la reserva N{reserva['ID']}.")
             tablas_del_sistema.guardar_data(reservas, "data/reservas.json")
             return None
@@ -631,7 +631,7 @@ def registrar_check_out(reservas: List[Dict]) -> None:
 
     Pre: reservas es una lista de diccionarios que contiene todas las reservas.
 
-    Post: Actualiza el estado de la reserva a 'check-out' si se encuentra y está en progreso.
+    Post: Actualiza el estado de la reserva a 'desocupada' si se encuentra y está en progreso.
           Si no se encuentra la reserva, muestra un mensaje informando de ello.
 
     """
@@ -640,9 +640,9 @@ def registrar_check_out(reservas: List[Dict]) -> None:
         print("No se encontró ninguna reserva con esos datos.")
         return None
     for reserva in reservas:
-        if reserva["ID"] == id_reserva and reserva["estado"] == "check-in":
+        if reserva["ID"] == str(id_reserva) and reserva["estado"] == "ocupada":
             reserva["estado"] = "desocupada"
             print(f"Check-out realizado con éxito para la reserva N{reserva['ID']}.")
             tablas_del_sistema.guardar_data(reservas, "data/reservas.json")
             return None
-    print("No se encontró una reserva en estado 'check-in' con esos datos.")
+    print("No se encontró una reserva en estado 'ocupada' con esos datos.")

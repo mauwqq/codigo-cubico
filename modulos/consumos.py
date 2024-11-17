@@ -3,7 +3,7 @@ from modulos import reservas
 from modulos import tablas_del_sistema
 
 
-def pedir_cod_producto(consumos: List[int]) -> int:
+def pedir_cod_producto(consumos: List[int], codigos: List[str]) -> int:
     """Pide al usuario el codigo del producto, verifica que sea correcto y lo devuelve.
 
     Pre: consumos es una lista de enteros.
@@ -18,7 +18,7 @@ def pedir_cod_producto(consumos: List[int]) -> int:
             cod = input("Ingrese el código del producto: ")
             if not cod.isdigit():
                 raise ValueError("Debe ingresar un numero.")
-            if cod not in tuple(str(i) for i in range(len(consumos))):
+            if cod not in codigos:
                 raise ValueError("Ingrese un número de producto válido.")
             break
         except ValueError as e:
@@ -46,6 +46,7 @@ def registrar_consumos(listado_reservas: List[Dict]) -> None:
         print("No se encontro la reserva.")
         return None
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+    
     if not listado_productos:
         return None
 
@@ -60,7 +61,7 @@ def registrar_consumos(listado_reservas: List[Dict]) -> None:
         nombre_producto = producto.get("NOMBRE", "Desconocido")
         print(f"Código: {id_producto} | Descripción: {nombre_producto}")
     consumos = reserva_encontrada.get("consumos", [0] * 5)
-    codigo_producto = pedir_cod_producto(consumos)
+    codigo_producto = pedir_cod_producto(consumos, tuple(producto['ID'] for producto in listado_productos))
     while True:
         try:
             cantidad_consumida = input(
@@ -113,7 +114,7 @@ def anular_consumos(listado_reservas: List[Dict]) -> None:
         nombre_producto = producto.get("NOMBRE", "Desconocido")
         print(f"Código: {id_producto} | Descripción: {nombre_producto}")
     consumos = reserva_encontrada.get("consumos", [])
-    codigo_producto = pedir_cod_producto(consumos)
+    codigo_producto = pedir_cod_producto(consumos, tuple(producto['ID'] for producto in listado_productos))
     while True:
         try:
             cantidad_anulada = input(

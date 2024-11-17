@@ -208,7 +208,7 @@
         "fin estadia": "2024/10/08",
         "estado": "ocupada",
         "consumos": [
-            0,
+            1,
             0,
             0,
             0,
@@ -230,7 +230,7 @@
         "fecha reserva": "2024/09/30",
         "inicio estadia": "2024/10/06",
         "fin estadia": "2024/10/09",
-        "estado": "reservada",
+        "estado": "desocupada",
         "consumos": [
             0,
             0,
