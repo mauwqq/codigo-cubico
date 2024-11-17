@@ -2,10 +2,9 @@
 
 ## Sistema: Gestión de Reservas Hoteleras
 
-### Desarrollo de Funciones
+*Trabajo terminado*
 
-### Haciendo
-- Retoques visuales a la interfaz de terminal TUI
+### Desarrollo de Funciones
 
 #### Hechas
 - Reservas:
@@ -25,4 +24,5 @@
   - Habitaciones
   - Productos Frigobar
   - Medios de pago
+- Retoques visuales a la interfaz de terminal TUI
 
