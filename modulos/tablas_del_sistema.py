@@ -130,7 +130,7 @@ def medios_de_pago() -> None:
     Post: Retorna None.
 
     """
-    medios = "Efectivo - Transferencia - Tarjeta de débito - Tarjetas de crédito - Cuenta DNI - Modo"
+    medios = "1. Efectivo - 2. Transferencia - 3. Tarjeta de débito - 4. Tarjetas de crédito - 5. Cuenta DNI - 6. Modo"
     print("=" * len(medios))
     print(medios)
     print("=" * len(medios))

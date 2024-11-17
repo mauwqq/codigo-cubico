@@ -67,7 +67,8 @@ def discriminar_iva() -> bool:
                 "Indique la condición frente al IVA (1-Monotributo o RI, 2-Consumidor final): ",
                 int,
             )
-            if condicion_iva not in (1, 2):
+            print(condicion_iva)
+            if condicion_iva not in ("1", "2"):
                 raise ValueError(
                     "Ingrese 1 para monotributo o RI y 2 para consumidor final."
                 )
@@ -129,12 +130,13 @@ def emitir_factura(listado_reservas: List[Dict]) -> None:
                     f"{producto['NOMBRE']} - Precio unitario: {precio_producto} - Cantidad: {cantidad_consumo} - Total: {total_consumo}"
                 )
     print(f"El importe de consumos del frigobar es de {consumo_total}")
-    importe_total = importe_a_facturar + consumo_total
+    importe_total = float(importe_a_facturar) + consumo_total
     print(f"El importe total a facturar es de $ {importe_total}")
+    tablas_del_sistema.medios_de_pago()
     medio_de_pago = pedir_num("Ingrese el medio de pago: ", int)
     discriminar = discriminar_iva()
     imprimir_factura(importe_a_facturar, consumo_total, medio_de_pago, discriminar)
-    reserva_encontrada["importe_pagado"] = importe_a_facturar + consumo_total
+    reserva_encontrada["importe_pagado"] = str(float(importe_a_facturar) + float(consumo_total))
     reserva_encontrada["medio_de_pago"] = medio_de_pago
     tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
     return None
@@ -209,7 +211,6 @@ def imprimir_factura(
     Post: No devuelve nada.
 
     """
-    print(f"Medio de pago: {medio_de_pago}")
-    imprimir_detalles_iva("Hospedaje", importe_a_facturar, discriminar)
-    imprimir_detalles_iva("Frigobar", consumo_total, discriminar)
+    imprimir_detalles_iva("Hospedaje", float(importe_a_facturar), discriminar)
+    imprimir_detalles_iva("Frigobar", float(consumo_total), discriminar)
     return None

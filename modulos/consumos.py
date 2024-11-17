@@ -65,8 +65,10 @@ def registrar_consumos(listado_reservas: List[Dict]) -> None:
     while True:
         try:
             cantidad_consumida = input(
-                f"Ingrese la cantidad consumida del producto {codigo_producto}: "
+                f"Ingrese la cantidad consumida del producto {codigo_producto} (-1 para salir): "
             )
+            if cantidad_consumida == "-1":
+                return None
             if not cantidad_consumida.isdigit():
                 raise ValueError("Debe ingresar un numero.")
             break
@@ -118,13 +120,15 @@ def anular_consumos(listado_reservas: List[Dict]) -> None:
     while True:
         try:
             cantidad_anulada = input(
-                f"Ingrese la cantidad a anular del producto {codigo_producto}: "
+                f"Ingrese la cantidad a anular del producto {codigo_producto} (-1 para salir): "
             )
+            if cantidad_anulada == "-1":
+                return None
             if not cantidad_anulada.isdigit():
                 raise ValueError("Debe ingresar un numero.")
             if int(cantidad_anulada) > consumos[int(codigo_producto)]:
                 raise ValueError(
-                    f"No se puede anular más de lo consumido. Consumo actual: {consumos[codigo_producto]}"
+                    f"No se puede anular más de lo consumido. Consumo actual: {consumos[int(codigo_producto)]}"
                 )
             break
         except ValueError as e:
