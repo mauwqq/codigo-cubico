@@ -29,7 +29,7 @@ def cargar_data(ruta: str) -> List[Dict]:
                 return []
         case "csv":
             try:
-                with open(ruta, mode="r", encoding="utf-8") as archivo:
+                with open(ruta, "rt", encoding="utf-8") as archivo:
                     lineas = archivo.readlines()
                 headers = lineas[0].strip().split(",")
                 data = []
@@ -102,7 +102,7 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                         f"No hay datos para guardar en el archivo CSV: {ruta}."
                     )
                 headers = data[0].keys()
-                with open(ruta, mode="w", encoding="utf-8") as archivo:
+                with open(ruta, "w", encoding="utf-8") as archivo:
                     archivo.write(",".join(headers) + "\n")
                     for linea in data:
                         archivo.write(
