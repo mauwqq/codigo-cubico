@@ -108,7 +108,6 @@ def guardar_data(data: List[Dict], ruta: str) -> None:
                         archivo.write(
                             ",".join(f'"{linea[header]}"' for header in headers) + "\n"
                         )
-                print("Datos guardados exitosamente.")
             except ValueError as e:
                 print(e)
             except (FileNotFoundError, IsADirectoryError):

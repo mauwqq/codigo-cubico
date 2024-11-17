@@ -20,44 +20,49 @@ meses = {
     12: 31,
 }
 
-validaciones_errores = {
-    "nombre": {
+validaciones = {
+    "Nombre": {
         "patron": r"^[a-zA-Z]+$",
         "mensajes": {
-            "vacío": "El nombre no puede estar vacío.",
+            "vacio": "El nombre no puede estar vacío.",
             "invalido": "El nombre debe ser una sola palabra sin espacios ni símbolos.",
             "sin_numeros": "El nombre no puede contener números.",
             "sin_simbolos": "El nombre no puede contener símbolos.",
         },
         "verificar_longitud": True,
+        "sin_numeros": True,
+        "sin_simbolos": True,
     },
-    "apellido": {
+    "Apellido": {
         "patron": r"^[a-zA-Z]+$",
         "mensajes": {
-            "vacío": "El apellido no puede estar vacío.",
+            "vacio": "El apellido no puede estar vacío.",
             "invalido": "El apellido debe ser una sola palabra sin espacios ni símbolos.",
             "sin_numeros": "El apellido no puede contener números.",
             "sin_simbolos": "El apellido no puede contener símbolos.",
         },
         "verificar_longitud": True,
+        "sin_numeros": True,
+        "sin_simbolos": True,
     },
     "domicilio": {
         "Calle": {
             "patron": r"^[a-zA-Z0-9 ]+$",
             "mensajes": {
-                "vacío": "La calle no puede estar vacía.",
+                "vacio": "La calle no puede estar vacía.",
                 "sin_simbolos": "La calle no puede contener símbolos.",
+                "invalido": "Ingrese una calle valida.",
             },
-            "permitir_vacio": False,
+            "sin_simbolos": True,
         },
         "Altura": {
             "patron": r"^\d+$",
             "mensajes": {
-                "vacío": "La altura no puede estar vacía.",
+                "vacio": "La altura no puede estar vacía.",
                 "sin_simbolos": "La altura no puede contener símbolos.",
                 "invalido": "La altura no debe contener letras.",
             },
-            "permitir_vacio": False,
+            "sin_simbolos": True,
         },
         "Piso": {
             "patron": r"^\d*$",
@@ -72,31 +77,31 @@ validaciones_errores = {
         "Localidad": {
             "patron": r"^[a-zA-Z0-9 ]+$",
             "mensajes": {
-                "vacío": "La localidad no puede estar vacía.",
+                "vacio": "La localidad no puede estar vacía.",
             },
-            "permitir_vacio": False,
+            "sin_simbolos": True,
         },
         "Provincia": {
-            "patron": r"^[a-zA-Z ]+$",
-            "mensajes": {"vacío": "La provincia no puede estar vacía."},
-            "permitir_vacio": False,
+            "patron": r"^[a-zA-Z0-9 ]+$",
+            "mensajes": {"vacio": "La provincia no puede estar vacía."},
+            "sin_simbolos": True,
         },
     },
-    "dni": {
-        "patron": r"^\d{7,8}$",
+    "Mail": {
+        "patron": r"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$",
         "mensajes": {
-            "vacío": "El DNI no puede estar vacío.",
-            "longitud": "El DNI debe contener solo números y tener entre 7 y 8 caracteres.",
+            "vacio": "El mail no puede estar vacio.",
+            "invalido": "Ingrese un mail valido.",
         },
         "verificar_longitud": True,
     },
-    "n_habitacion": {
-        "patron": r"^\d+$",
+    "Telefono": {
+        "patron": r"^\+[0-9]{11,15}$",
         "mensajes": {
-            "vacío": "El número de habitación no puede estar vacío.",
-            "invalido": "El número de habitación debe contener solo dígitos.",
-            "sin_simbolos": "El número de habitación no puede contener símbolos ni letras.",
+            "vacio": "El telefono no puede estar vacio.",
+            "invalido": "Ingrese un telefono valido.",
         },
+        "verificar_longitud": True,
     },
 }
 
@@ -119,12 +124,26 @@ def solicitar_input(validacion: Callable[[str], str], msj: str) -> str:
             print(e)
 
 
-def validar_con_regex(
+def validar_regex(patron: str, valor: str) -> bool:
+    """Se le da un patron regex y un dato, comprueba si el dato cumple con el patron.
+
+    Pre: patron es un string.
+         valor es un string.
+
+    Post: Devuelve un booleano.
+
+    """
+    return bool(re.match(patron, valor))
+
+
+def validar(
     patron: str,
     valor: str,
     mensajes: Dict[str, str],
-    verificar_longitud: bool = True,
+    verificar_longitud: bool = False,
     permitir_vacio: bool = False,
+    sin_numeros: bool = False,
+    sin_simbolos: bool = False,
 ) -> str:
     """Valida un valor con una expresión regular y mensajes personalizados.
 
@@ -133,6 +152,8 @@ def validar_con_regex(
          mensajes es un diccionario con mensajes de error personalizados.
          verificar_longitud es un booleano que indica si se debe verificar la longitud mínima.
          permitir_vacio es un booleano que indica si se permite un valor vacío.
+         sin_numeros es un booleano que indica si se debe verificar que no tenga numeros.
+         sin_simbolos es un booleano que indica si se debe verificar que no tenga simbolos.
 
     Post: Retorna el valor validado, formateado correctamente.
 
@@ -144,45 +165,20 @@ def validar_con_regex(
         return ""
     if not valor:
         raise ValueError(mensajes.get("vacío", "El campo no puede estar vacio."))
-    if not re.match(patron, valor):
-        if any(char.isdigit() for char in valor):
-            raise ValueError(
-                mensajes.get("sin_numeros", "El campo no puede contener números.")
-            )
-        if not re.match(r"^[a-zA-Z0-9 ]+$", valor):
-            raise ValueError(
-                mensajes.get("sin_simbolos", "El campo no puede contener símbolos.")
-            )
+
+    if sin_numeros and any(char.isdigit() for char in valor):
+        raise ValueError(
+            mensajes.get("sin_numeros", "El campo no puede contener números.")
+        )
+    if sin_simbolos and not validar_regex(r"^[a-zA-Z0-9 ]+$", valor):
+        raise ValueError(
+            mensajes.get("sin_simbolos", "El campo no puede contener símbolos.")
+        )
+    if not validar_regex(patron, valor):
         raise ValueError(mensajes["invalido"])
     if verificar_longitud and len(valor) < 3:
         raise ValueError("El campo debe tener al menos tres letras.")
     return valor.title()
-
-
-def validar_campo(campo: str, valor: str) -> str:
-    """Valida un campo de datos, incluyendo los campos de domicilio.
-
-    Pre: campo es una cadena que representa el nombre del campo a validar.
-         valor es la cadena que se valida.
-
-    Post: Retorna el valor validado del campo.
-
-    Raises: ValueError si el campo no cumple con las condiciones de validación definidas.
-
-    """
-    es_domicilio = campo in validaciones_errores["domicilio"]
-    validacion = (
-        validaciones_errores["domicilio"][campo]
-        if es_domicilio
-        else validaciones_errores[campo]
-    )
-    patron = validacion["patron"]
-    mensajes = validacion["mensajes"]
-    permitir_vacio = validacion.get("permitir_vacio", False)
-    verificar_longitud = validacion.get("verificar_longitud", False)
-    return validar_con_regex(
-        patron, valor, mensajes, verificar_longitud, permitir_vacio
-    )
 
 
 def validar_dni(dni: str) -> int:
@@ -203,43 +199,6 @@ def validar_dni(dni: str) -> int:
     return int(dni)
 
 
-def solicitar_datos_domicilio() -> Dict[str, str]:
-    """Solicita y valida los datos de domicilio del usuario.
-
-    Pre: No recibe parámetros.
-
-    Post: Retorna un diccionario con los datos de domicilio validados.
-
-    Raises: ValueError si alguno de los campos de domicilio no es válido.
-
-    """
-    print("Domicilio")
-    campos = [
-        "Provincia",
-        "Localidad",
-        "Calle",
-        "Altura",
-        "Piso",
-        "Departamento",
-    ]
-    # Estructura generada
-    # {'Provincia': '', 'Localidad': '', 'Calle': '', 'Altura': '0', 'Piso': '0', 'Departamento': '0'}
-    return {
-        campo: solicitar_input(
-            lambda x: validar_campo(campo, x),
-            (
-                f"{campo}: "
-                if validaciones_errores["domicilio"]
-                .get(campo, {})
-                .get("mensajes", {})
-                .get("vacío", "")
-                else f"{campo} ('Enter' si no aplica): "
-            ),
-        )
-        for campo in campos
-    }
-
-
 def solicitar_datos_cliente() -> Tuple[str, str, int, str, str, str, str, str, str]:
     """Solicita y valida los datos del cliente.
 
@@ -247,23 +206,57 @@ def solicitar_datos_cliente() -> Tuple[str, str, int, str, str, str, str, str, s
 
     Post: Retorna una tupla con los datos del cliente validados.
 
-    Raises: ValueError si alguno de los campos del cliente no es válido.
-
     """
-    nombre = solicitar_input(lambda x: validar_campo("nombre", x), "Nombre: ")
-    apellido = solicitar_input(lambda x: validar_campo("apellido", x), "Apellido: ")
-    dni = solicitar_input(validar_dni, "DNI: ")
-    domicilio = solicitar_datos_domicilio()
+    resultados = {}
+    for campo, config in validaciones.items():
+        if isinstance(
+            config, dict
+        ):  # Comprueba si el campo que esta comprobando es un dicionario.
+            if all(
+                isinstance(subconfig, dict) for subconfig in config.values()
+            ):  # Comprueba si todos los valores de un diccionario son diccionarios.
+                resultados[campo] = {}
+                for subcampo, subconfig in config.items():
+                    resultados[campo][subcampo] = solicitar_input(
+                        lambda x: validar(
+                            subconfig["patron"],
+                            x,
+                            subconfig["mensajes"],
+                            verificar_longitud=subconfig.get(
+                                "verificar_longitud", False
+                            ),
+                            permitir_vacio=subconfig.get("permitir_vacio", False),
+                            sin_numeros=subconfig.get("sin_numeros", False),
+                            sin_simbolos=subconfig.get("sin_simbolos", False),
+                        ),
+                        f"{subcampo}: ",
+                    )
+            else:
+                resultados[campo] = solicitar_input(
+                    lambda x: validar(
+                        config["patron"],
+                        x,
+                        config["mensajes"],
+                        verificar_longitud=config.get("verificar_longitud", False),
+                        permitir_vacio=config.get("permitir_vacio", False),
+                        sin_numeros=config.get("sin_numeros", False),
+                        sin_simbolos=config.get("sin_simbolos", False),
+                    ),
+                    f"{campo}: ",
+                )
+    dni = solicitar_input(lambda x: validar_dni(x), "DNI: ")
     return (
-        nombre,
-        apellido,
+        resultados["Nombre"],
+        resultados["Apellido"],
         dni,
-        domicilio["Calle"],
-        domicilio["Altura"],
-        domicilio["Piso"],
-        domicilio["Departamento"],
-        domicilio["Localidad"],
-        domicilio["Provincia"],
+        resultados["Mail"].lower(),
+        resultados["Telefono"],
+        resultados["domicilio"]["Calle"],
+        resultados["domicilio"]["Altura"],
+        resultados["domicilio"]["Piso"],
+        resultados["domicilio"]["Departamento"],
+        resultados["domicilio"]["Localidad"],
+        resultados["domicilio"]["Provincia"],
     )
 
 
@@ -369,34 +362,82 @@ def habitacion_desocupada(n: int) -> bool:
     return True
 
 
-def habitacion() -> int:
-    """Pide un numero de habitacion hasta que se ingrese uno valido y lo devuelve.
+def habitacion() -> str:
+    """Pregunta en que habitacion se va a alojar el huesped y si existe la habitacion
+    y no esta ocupada devuelve el numero de habitacion.
 
-    Pre: No recibe nada.
+    Pre: Ninguno.
 
-    Post: Devuelve un numero entero.
+    Post: Devuelve un string.
 
-    Raises: ValueError si la habitacion no existe.
+    Raises: ValueError: Si no se encontraron habitaciones disponibles,
+            si el numero ingresado no es un numero,
+            si el numero de habitacion no corresponde a una habitacion,
+            si la habitacion esta ocupada.
 
     """
     habitaciones = tablas_del_sistema.cargar_data("data/habitaciones.csv")
     if not habitaciones:
-        return 0
+        raise ValueError("No se encontraron habitaciones disponibles.")
     while True:
         try:
-            n_habitacion = solicitar_input(
-                lambda x: validar_campo("n_habitacion", x), "Número de habitación: "
-            )
+            n_habitacion = input("Ingrese el número de habitación: ").strip()
+            if not n_habitacion.isdigit():
+                raise ValueError("El número de habitación debe ser un valor numérico.")
+            n_habitacion = int(n_habitacion)
             if str(n_habitacion) not in [
                 habitacion["NUMERO_HABITACION"] for habitacion in habitaciones
             ]:
-                raise ValueError(f"La habitacion {n_habitacion} no existe.")
+                raise ValueError(f"La habitación {n_habitacion} no existe.")
             if not habitacion_desocupada(n_habitacion):
-                raise ValueError("La habitacion se encuentra ocupada.")
+                raise ValueError(f"La habitación {n_habitacion} está ocupada.")
             break
         except ValueError as e:
             print(e)
-    return n_habitacion
+    return str(n_habitacion)
+
+
+def registrar_cliente(
+    nombre: str,
+    apellido: str,
+    dni: int,
+    localidad: str,
+    provincia: str,
+    calle: str,
+    altura: str,
+    piso: str,
+    dpto: str,
+    tel: str,
+    mail: str,
+) -> None:
+    """Registra los datos del cliente que esta reservando, en el archivo data/clientes.csv.
+
+    Pre: nombre, apellido, localidad, provincia, calle, altura, piso, dpto, tel, mail son strings.
+         dni es un entero.
+
+    Post: No devuelve nada.
+
+    """
+    clientes = tablas_del_sistema.cargar_data("data/clientes.csv")
+    clientes.append(
+        {
+            "ID": f"{str(len(clientes)+1)}",
+            "NOMBRE": nombre,
+            "APELLIDO": apellido,
+            "DNI": str(dni),
+            "LOCALIDAD": localidad,
+            "PROVINCIA": provincia,
+            "CALLE": calle,
+            "PISO": piso,
+            "ALTURA": altura,
+            "DPTO": dpto,
+            "TELEFONO": tel,
+            "MAIL": mail,
+        }
+    )
+    tablas_del_sistema.guardar_data(clientes, "data/clientes.csv")
+    print("Cliente añadido correctamente.")
+    return None
 
 
 def registrar_reserva(reservas: List[Dict]) -> None:
@@ -409,9 +450,19 @@ def registrar_reserva(reservas: List[Dict]) -> None:
     """
     if not reservas:
         return None
-    nombre, apellido, dni, calle, altura, piso, dpto, localidad, provincia = (
-        solicitar_datos_cliente()
-    )
+    (
+        nombre,
+        apellido,
+        dni,
+        mail,
+        tel,
+        calle,
+        altura,
+        piso,
+        dpto,
+        localidad,
+        provincia,
+    ) = solicitar_datos_cliente()
     n_habitacion = habitacion()
     if not n_habitacion:
         return None
@@ -430,6 +481,7 @@ def registrar_reserva(reservas: List[Dict]) -> None:
         except ValueError as e:
             print(e)
     listado_productos = tablas_del_sistema.cargar_data("data/productos.csv")
+
     reserva = {
         "ID": str(len(reservas) + 1),
         "nombre": nombre,
@@ -451,6 +503,19 @@ def registrar_reserva(reservas: List[Dict]) -> None:
     reservas.append(reserva)
     tablas_del_sistema.guardar_data(reservas, "data/reservas.json")
     print("Reserva registrada con éxito.")
+    registrar_cliente(
+        nombre,
+        apellido,
+        dni,
+        localidad,
+        provincia,
+        calle,
+        altura,
+        piso,
+        dpto,
+        tel,
+        mail,
+    )
     return None
 
 
@@ -463,8 +528,28 @@ def consultar_reserva(reservas: List[Dict]) -> int:
     Post: Si encuentra la reserva, devuelve el id de la reserva, sino, devuelve 0.
 
     """
-    nombre = solicitar_input(lambda x: validar_campo("nombre", x), "Nombre: ")
-    apellido = solicitar_input(lambda x: validar_campo("apellido", x), "Apellido: ")
+    nombre = solicitar_input(
+        lambda x: validar(
+            validaciones["Nombre"]["patron"],
+            x,
+            validaciones["Nombre"]["mensajes"],
+            verificar_longitud=True,
+            sin_numeros=True,
+            sin_simbolos=True,
+        ),
+        "Nombre: ",
+    )
+    apellido = solicitar_input(
+        lambda x: validar(
+            validaciones["Apellido"]["patron"],
+            x,
+            validaciones["Apellido"]["mensajes"],
+            verificar_longitud=True,
+            sin_numeros=True,
+            sin_simbolos=True,
+        ),
+        "Apellido: ",
+    )
     reserva_encontrada = list(
         reserva
         for reserva in reservas
