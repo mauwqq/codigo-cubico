@@ -187,8 +187,15 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
             "Ingrese el importe total a anular en nota de crédito: ", float
         )
         print(f"El importe ingresado es: {importe_a_anular}")
-        reserva_encontrada["importe_pagado"] = float(importe_pagado) - float(importe_a_anular)
-        discriminar_iva()
+        importe_final = float(importe_pagado) - float(importe_a_anular)
+        if importe_final < 0:
+            importe_final = 0.0
+        reserva_encontrada["importe_pagado"] = importe_final
+        discriminar = discriminar_iva()
+        consumos = reserva_encontrada.get("consumos", [])
+        consumo_total = calcular_consumo_total(consumos, tablas_del_sistema.cargar_data("data/productos.csv"))
+        tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
+        imprimir_factura(importe_final, consumo_total, discriminar)
     else:
         print("No se encontro la reserva.")
     return None
