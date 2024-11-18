@@ -135,7 +135,7 @@ def emitir_factura(listado_reservas: List[Dict]) -> None:
     tablas_del_sistema.medios_de_pago()
     medio_de_pago = pedir_num("Ingrese el medio de pago: ", int)
     discriminar = discriminar_iva()
-    imprimir_factura(importe_a_facturar, consumo_total, medio_de_pago, discriminar)
+    imprimir_factura(importe_a_facturar, consumo_total, discriminar)
     reserva_encontrada["importe_pagado"] = str(float(importe_a_facturar) + float(consumo_total))
     reserva_encontrada["medio_de_pago"] = medio_de_pago
     tablas_del_sistema.guardar_data(listado_reservas, "data/reservas.json")
@@ -187,7 +187,7 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
             "Ingrese el importe total a anular en nota de crédito: ", float
         )
         print(f"El importe ingresado es: {importe_a_anular}")
-        reserva_encontrada["importe_pagado"] = importe_pagado - importe_a_anular
+        reserva_encontrada["importe_pagado"] = float(importe_pagado) - float(importe_a_anular)
         discriminar_iva()
     else:
         print("No se encontro la reserva.")
@@ -197,7 +197,6 @@ def emitir_nota_de_credito(listado_reservas: List[Dict]) -> None:
 def imprimir_factura(
     importe_a_facturar: float,
     consumo_total: float,
-    medio_de_pago: str,
     discriminar: bool,
 ) -> None:
     """
